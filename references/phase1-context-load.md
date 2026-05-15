@@ -319,7 +319,7 @@ Instead, prompt the user with this exact workflow:
 
 > "Programmatic Phase 1 work is complete. Source archive at `~/Claude Projects/Equity Research/[TICKER]/`.
 >
-> One remaining manual step: please log into CapIQ (or Bloomberg / FactSet / Imperial library equivalents) and download the following into `~/Claude Projects/Equity Research/[TICKER]/sell-side/`. Save research as PDFs and data screens as PDF/PNG exports.
+> One remaining manual step: please log into CapIQ (or Bloomberg / FactSet / your institutional library equivalents) and download the following into `~/Claude Projects/Equity Research/[TICKER]/sell-side/`. Save research as PDFs and data screens as PDF/PNG exports.
 >
 > **Research notes**:
 >
