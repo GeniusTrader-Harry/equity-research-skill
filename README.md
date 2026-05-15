@@ -69,9 +69,9 @@ flowchart TD
     K --> L[Phase 11<br/>One model + sensitivity<br/>+ bull/base/bear envelope]
     L --> M[Phase 12<br/>Iterate on surprises]
     M --> N[Phase 13<br/>Write 5–8 page memo]
-    style H fill:#ffe4b5
-    style K fill:#ffe4b5
-    style N fill:#c8e6c9
+    style H fill:#ffe4b5,stroke:#333,color:#000
+    style K fill:#ffe4b5,stroke:#333,color:#000
+    style N fill:#c8e6c9,stroke:#333,color:#000
 ```
 
 The amber boxes are the load-bearing judgement moments — direction commit and pillar audit. The skill drafts; you commit. Every phase boundary pauses for Q&A.
