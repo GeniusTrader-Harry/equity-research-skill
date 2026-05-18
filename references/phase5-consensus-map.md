@@ -125,6 +125,25 @@ Sources: [list — e.g., GS initiation 2024-09, JPM update 2025-10, Yahoo Financ
 - [Where dispersion is widest — flag for Phase 6 asymmetry hunt]
 - [Where consensus diverges from mgmt guidance — flag]
 - [Drivers with no Street view — these are uncovered alpha candidates]
+
+## Anchor existence matrix — which sources cover which metric × year
+
+This is a separate table that explicitly records **what each source covers** — used by Phase 8 (drafting pillars) and Phase 10 (Gate A — anchor existence check) so no pillar cites a forecast horizon that the source does not actually publish.
+
+| Source | Note date | Revenue FY+1 | Revenue FY+2 | Revenue FY+3 | GM FY+1 | GM FY+2 | GM FY+3 | OI FY+1 | OI FY+2 | OI FY+3 | [Key driver] FY+3 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| CapIQ Median | [date pulled] | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ | ✗ |
+| [Sell-side firm 1] | [date] | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (quantified bridge) | ✓ | ✓ | ✓ | ✓ |
+| [Sell-side firm 2] | [date] | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (narrative only) | ✓ | ✓ | ✓ | — |
+| [Sell-side firm 3] | [date] | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ (stops FY+2) | ✓ | ✓ | ✗ | — |
+
+Fill in:
+- ✓ = source publishes a forecast for that cell
+- ✗ = source explicitly does NOT cover that cell (e.g., CapIQ Median for FY+3 forecasts)
+- (qualifier) = note if the forecast is narrative-only vs quantified-bridge, audited vs estimate, etc.
+- — = unknown / not checked
+
+**Rule for Phases 8 + 10**: never cite a source for a cell marked ✗. If FY+3 GM is needed and CapIQ doesn't cover it, the only valid anchors are the sell-side firms that DO publish FY+3 GM — and the pillar evidence must name them, not generic "Street consensus."
 ```
 
 ## Q&A interlude (LIGHT–MEDIUM)

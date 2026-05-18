@@ -1,253 +1,411 @@
 # Phase 13 — Write the Pitch (Investment Memo)
 
-**Goal**: Synthesize Phases 1–12 into a 5–8 page investment memo. The memo is the deliverable — used for interview pitches, PM hand-offs, and self-reference. Page 1 is the verbal-pitchable summary; pages 2–8 carry the depth.
+**Goal**: Synthesize Phases 1-12 into an interview-grade investment memo. The memo is the deliverable — used for interview pitches, PM hand-offs, and self-reference. The cover page is the verbal-pitchable summary; the body sections carry the depth.
 
-**Output**: `~/Claude Projects/Equity Research/[TICKER]/deliverables/[ticker]_pitch.md`
+**Output**:
+- `~/Claude Projects/Equity Research/[TICKER]/deliverables/[ticker]_pitch.md` — source markdown
+- `~/Claude Projects/Equity Research/[TICKER]/deliverables/[ticker]_pitch.docx` — Word output
+- `~/Claude Projects/Equity Research/[TICKER]/deliverables/[ticker]_pitch.pdf` — PDF output (sell-side styled)
 
-## Why 5–8 pages, not 1, not 50
+## Why 10-18 pages, not 5-8, not 50
 
-- **1-page** is too tight to demonstrate analytical depth interviewers probe for (*"what's your evidence on pillar 2?"*). Forces compression that hides the work.
-- **30–50 pages** (sell-side initiation format) is for institutional publication, not for a student building understanding or pitching in an interview. ~80% would be boilerplate.
-- **5–8 pages** matches buy-side associate / PM internal memo format. Enough room for 3–4 pillars at ~½–1 page each plus risks, valuation, and killing conditions. Tight enough to force discipline.
+- **5-8 pages** is too tight to include a defensible DCF appendix. Without one, the memo loses interview defensibility — interviewers probe valuation mechanics, not just the headline PT.
+- **30-50 pages** (sell-side initiation format) is for institutional publication. ~80% boilerplate.
+- **10-18 pages** matches buy-side associate / PM memo format with appendices. Body sections carry the thesis depth, appendices carry the model mechanics.
 
 ## Two-layer principle
 
 | Layer | Content | Purpose |
 |---|---|---|
-| **Memo** (5–8 pages, `deliverables/[ticker]_pitch.md`) | Synthesized argument with evidence + model output + killing conditions | Interview artifact; self-test of integration |
-| **Working archive** (`working/`) | Phase 1 raw filings + briefs, Phase 2–3 understanding, Phase 6 asymmetries, Phase 8–10 pillar dev, Phase 11 model | Drill-down reference; not handed to anyone |
+| **Memo** (10-18 pages, body + 2 appendices, `deliverables/[ticker]_pitch.*`) | Synthesized argument with evidence + model output + killing conditions + DCF mechanics | Interview artifact; self-test of integration |
+| **Working archive** (`working/`) | Phase 1 raw filings + briefs, Phase 2-3 understanding, Phase 6 asymmetries, Phase 8-10 pillar dev, Phase 11 model | Drill-down reference; not handed to anyone |
 
 The memo references the archive but does not reproduce it.
 
 ## Two pitch formats
 
 ### Standard Investment Memo (LONG or SHORT direction)
-Used when Phase 7 committed to a direction and Phase 12 converged. 5–8 pages. See section "Standard Memo Structure" below.
+Used when Phase 7 committed to a direction and Phase 12 converged. 10-18 pages. See section "Standard Memo Structure" below.
 
 ### Pass Note
-Used when Phase 7 committed to PASS, or when Phase 12 failed to converge after 2 iterations. 1–2 pages. See "Pass Note Format" below.
+Used when Phase 7 committed to PASS, or when Phase 12 failed to converge after 2 iterations. 1-2 pages. See "Pass Note Format" below.
 
 ---
 
-## STANDARD MEMO STRUCTURE — 7 sections
+## Vocabulary at the memo boundary
 
-### Section 1 — Pitch summary (½–1 page)
+The working files use **"Pillar"** (analytical vocabulary). The deliverable memo uses **"Thesis"** (pitch vocabulary). Rename at the memo boundary:
 
-The verbal-pitchable top. If someone reads only page 1, they have the call.
+- "Pillar 1 / Pillar 2 / Pillar 3" → "Thesis 1 / Thesis 2 / Thesis 3"
+- Killing condition labels: "P1.2" → "T1.2"
+- "Counter-pillar" → "Risk" (in memo Section 5)
+
+Working files stay as-is.
+
+---
+
+## STANDARD MEMO STRUCTURE
+
+### Cover page (1 page)
+
+YAML frontmatter renders into a clean sell-side cover via pandoc + the shipped CSS. **Do NOT add a `# TICKER` h1 heading** — it would duplicate the YAML title block. Body content starts at section 1.
 
 ```markdown
-# [TICKER] — [Rating] — Target $[X], [+/-Y%]
-Date: [YYYY-MM-DD] | Current: $[Z] | Author: [name]
+---
+title: "[Company name] ([Exchange]: [TICKER])"
+subtitle: "[LONG/SHORT] | Price target $[PT] ([+/-X%]) | YYYY-MM-DD"
+author: "[Your name]"
+---
 
-**Rating**: [BUY / HOLD / SELL]
-**Target price**: $[X] ([+/-Y%] vs. current $[Z])
-**Conviction**: [Low / Medium / High]
-**Time horizon**: [6mo / 12mo / 18mo]
+| | |
+|---|---|
+| **Rating** | **[LONG / SHORT]** |
+| **Price target (12-month)** | **$[PT]** |
+| **Current price** ([YYYY-MM-DD]) | $[spot] |
+| **Upside to target** | **+/-[X]%** |
+| **Market cap** | ~$[Mkt cap] |
+| **Reporting currency** | [USD / EUR / GBP / etc. + FX rate to USD if non-USD] |
 
-## Risk/reward (asymmetric payoff around the base case)
+## Five-year financial estimates ([currency] M)
 
-| Scenario | Target | vs Spot | Trigger |
-|---|---|---|---|
-| Bull (pillars-fire) | $[C] | +[D]% | [1-line linking to specific pillars overshooting] |
-| **Base (committed view)** | **$[X]** | **+[Y]%** | [the thesis as committed] |
-| Bear (pillars-fail) | $[A] | -[B]% | [1-line linking to specific counter-pillars materializing] |
+| | **FY[N]A** | **FY[N+1]E** | **FY[N+2]E** | **FY[N+3]E** | **FY[N+5]E** |
+|---|---|---|---|---|---|
+| Revenue | | | | | |
+| Y/Y growth | | | | | |
+| [Key margin — GM or EBITDA] | | | | | |
+| Operating income | | | | | |
+| EBIT margin | | | | | |
+| FCFF | | | | | |
+| [Key driver — subs, units, ASP] | | | | | |
 
-**Skew** = (Bull − Spot) / (Spot − Bear) = **[ratio]:1**
-
-## In one paragraph
-[1–2 sentence framing of setup + thesis in plain English. The 60-second verbal pitch.]
-
-## Pillars (one line each)
-1. **[Pillar 1 title]** — [one-sentence claim with key number]
-2. **[Pillar 2 title]** — [one-sentence claim with key number]
-3. **[Pillar 3 title]** — [one-sentence claim with key number]
-
-## Key risks (one line each)
-1. **[Risk 1]** — [one-sentence counter-pillar]
-2. **[Risk 2]** — [one-sentence counter-pillar]
-3. **[Risk 3]** — [one-sentence counter-pillar]
-
-## Catalysts
-- [Date] — [event] — [why it matters / which pillar it tests]
-- [Date] — [event] — [why it matters]
-
-## What would change my mind (teaser)
-See Section 7. [N] killing conditions; the most important: [1 example].
+*FY[N]A audited per [filing] filed [date]. Forwards from internal model; full schedule in Appendix A.*
 ```
 
-### Section 2 — Business in 5 minutes (½–¾ page)
+**Do NOT include on the cover:**
+- "Conviction" line (belongs in PM cover note, not public memo)
+- "Time horizon" line (implicit from PT period)
+- Three-line thesis bullets (the body delivers thesis depth)
+- 52-week range (not material to call)
+- Probability-weighted target (single-point base PT + envelope is the convention)
+
+### Section 1 — Business overview (1 page)
 
 Compressed from Phase 2 `company_brief.md`. Not a re-derivation — a synthesis pointing at what matters for the thesis.
 
 ```markdown
-# Business
+# 1. Business Overview
 
-**What & how**: [2–3 sentences on what the company does and how it makes money]
+## What [Company] does and how it makes money
 
-**Revenue mix** (FY[year]):
-- [Segment 1]: [%] — [1-line description]
-- [Segment 2]: [%] — [1-line description]
-- [Segment 3]: [%] — [1-line description]
+[2-3 paragraph framing: what the business does, how revenue is generated, and the segment mix.]
 
-**Scale**: [revenue, EBITDA margin, FCF, employees, geographic split — 3 lines]
+[Insert revenue mix table:]
 
-**Management**: [CEO + CFO names, tenure, 1-line track record, insider ownership %]
-```
-
-### Section 3 — Industry & competitive position (½–¾ page)
-
-Compressed from Phase 3 `industry_brief.md`. Focused on what matters for the thesis.
-
-```markdown
-# Industry
-
-**Market structure**: [TAM with source; growth rate; concentrated vs. fragmented; key secular trend — 2–3 lines]
-
-**Competitive set** (top 3–5):
-| Company | Position | Comment |
-|---|---|---|
-| [Comp 1] | [#X] | [1-line] |
-| [Comp 2] | [#X] | [1-line] |
-| [Comp 3] | [#X] | [1-line] |
-
-**Where [TICKER] sits**: [2–3 sentences — market share, defensibility, moat type with evidence]
-```
-
-### Section 4 — Thesis pillars in depth (1.5–3 pages) — LOAD-BEARING
-
-This is the meat. Each pillar gets a structured write-up of ~300–500 words:
-
-```markdown
-## Pillar [N] — [short title]
-
-**Claim**: *"[5-element pillar statement verbatim from Phase 10 audited list]"*
-
-**Mechanism** (~80–120 words). [Causal story. Why does this happen? What's the underlying business / industry / accounting / behavioral driver?]
-
-**Evidence** (~120–180 words):
-- [Source 1, with file path or page #]: [verbatim quote or specific data point]
-- [Source 2, with citation]: [data point]
-- [Source 3, with citation]: [data point]
-- [Source 4]: [if applicable — independence matters; aim for 3+ independent sources from Phase 10 Check 3]
-
-**Magnitude** (~60–100 words). [Walk through the math from driver delta to EPS to target price impact. Mirror Phase 10 Check 2 computation. Example: "+400bps GM × $12B revenue = $480M incremental gross profit, ~85% flow-through = $400M EBIT, after 25% tax = $300M NI, ÷1.2B shares = $0.25 EPS, × 25x multiple = $6.25/share = +4.3% to target."]
-
-**Asymmetry mapping**: Phase 6 asymmetry #[N] ([title]). Why Street has it wrong: [1 sentence].
-
-**Model linkage**: Cell `Assumptions!_[ref]` = [value] vs. Street consensus [value].
-
----
-[repeat for each surviving pillar from Phase 10]
-```
-
-**Quality check**: if a pillar's write-up can't fill ~300 words honestly, the pillar is too thin to defend in an interview. Sharpen, drop, or kick back to Phase 10.
-
-### Section 5 — Risks (steel-manned) (¾–1 page)
-
-Verbatim from Phase 9 `risks.md` with light formatting. Each counter-pillar + rejection reasoning.
-
-```markdown
-# Risks (steel-manned counter-arguments)
-
-These are the strongest arguments for the opposite direction. We've considered them and reject them, but they remain real risks.
-
-## Counter-pillar 1 — [title]
-**Bear case**: *"[5-element counter-pillar statement from Phase 9]"*
-
-**Why we still hold the call**: [paragraph from Phase 9 rejection reasoning — specific evidence, not vibes]
-
-**Severity if it plays out**: [estimated target impact, e.g., "would push target to $[X] (-Y%)"]
-
----
-[repeat for each Phase 9 counter-pillar, typically 2–3 total]
-```
-
-### Section 6 — Valuation (½–1 page)
-
-Compressed Phase 11 model output. Don't reproduce the model — summarize it.
-
-```markdown
-# Valuation
-
-## Central case
-**Methodology**: DCF primary, comps cross-check.
-**Target**: $[X] (= $[Y] DCF, $[Z] comps-implied; weighted [%/%])
-**Upside / downside**: [+/-Y%] vs. current $[current]
-**Implied forward [P/E or EV/EBITDA]**: [Xx] (vs. comp set median [Yx])
-
-## Key DCF assumptions
-| Driver | FY[Y1] | FY[Y3] | FY[Y5] | Terminal |
+| Segment | FY[N] revenue ([currency] M) | % total | Segment GM / margin | FY[N] growth |
 |---|---|---|---|---|
-| Revenue growth | [%] | [%] | [%] | [%] |
-| Gross margin | [%] | [%] | [%] | [%] |
-| Operating margin | [%] | [%] | [%] | [%] |
-| WACC | — | — | — | [%] |
-| Terminal growth | — | — | — | [%] |
 
-## Sensitivity (bull/base/bear envelope around the committed base)
-- Bull case (top 2-3 swing assumptions flexed favorable + pillars overshoot): $[C] ([+D%])
-- **Base (committed)**: $[X] ([+/-Y%])
-- Bear case (top 2-3 swing assumptions flexed unfavorable + counter-pillars partially realize): $[A] ([-B%])
-- Risk/reward skew: (Bull − Spot) / (Spot − Bear) = [ratio]:1
+[Optional 1-paragraph deeper economics framing — royalty waterfall, unit economics, etc.]
 
-Note: bull and bear are not alternative theses — they're the payoff envelope around the single committed direction. Triggers link to specific pillars/counter-pillars from Phases 8–9.
+## Product portfolio
+
+[Insert product table — rows = product lines:]
+
+| Product | What it is | Pricing | Role |
+|---|---|---|---|
+
+[1-paragraph notes on GTM model, customer mix, geographic distribution.]
+
+## Operating economics — [profitability inflection / margin trajectory]
+
+[Insert historical table showing the operating trajectory:]
+
+| | FY[N-3] | FY[N-2] | FY[N-1] | FY[N] |
+|---|---|---|---|---|
+| Operating margin | | | | |
+| Operating income | | | | |
+| [Key segment margins as applicable] | | | | |
+
+[2-3 paragraphs explaining the operating-economics drivers and what the trajectory means for the thesis.]
+```
+
+**Do NOT include in Section 1:**
+- Management subsection (demoted; lives in `working/company_brief.md`). Include only if management is itself part of the thesis (activist call, new-CEO turnaround, etc.).
+
+### Section 2 — Industry & competitive position (1-2 pages)
+
+Compressed from Phase 3 `industry_brief.md`.
+
+```markdown
+# 2. Industry & Competitive Position
+
+## Market structure
+[Bullets: TAM, growth rate, secular drivers, concentration]
+
+## [Unit economics framing if applicable — e.g., royalty waterfall, take rate, etc.]
+[Industry-specific economic constraint that frames the thesis]
+
+## Competitive set
+
+| Player | Owner | [Size metric] | Share | Position |
+|---|---|---|---|---|
+
+[1-paragraph framing: where TICKER sits and the structural read.]
+
+## Moats
+
+[Insert moat table:]
+
+| Moat type | Rating | Evidence (≤1 sentence each) |
+|---|---|---|
+
+## [Optional] Long-duration competitive threat: [named threat]
+
+[Include this sub-section ONLY when one competitor poses an asymmetric multi-year share-shift risk that needs substantive (>150w) treatment. Explain (i) the mechanism by which they could take share, (ii) the asymmetry vs current pricing (e.g., ad-funded vs subscription-funded economics), (iii) the data showing whether/where share is currently shifting, (iv) the metric to monitor going forward. If competition is symmetric or already accounted for in the competitive-set table, skip this sub-section.]
+```
+
+### Section 3 — Investment Thesis (3-5 pages) — LOAD-BEARING
+
+The meat of the memo. Each thesis gets a **balanced** structure — neither pure-prose nor pure-bullet, both have failure modes.
+
+**Per-thesis structure:**
+
+```markdown
+## Thesis [N] — [headline with key number]
+
+**Claim.** [1-2 sentences with the central testable assertion + headline magnitude.]
+
+**Mechanism.**
+[Paragraph 1 — the structural argument in prose. Why does this work at the business-model level? What is the causal story? Not data points — the underlying mechanic.]
+
+[Supporting bullets when appropriate — particularly for distinct sub-mechanisms or supporting points:]
+- **[Sub-mechanism / supporting point name].** [Explanation.]
+- ...
+
+[Optional Paragraph 2 — tying the mechanism to model output or to the broader thesis architecture.]
+
+**Evidence.**
+- [Specific data point with source citation]
+- [Source quote, with file path or page #]
+- [...]
+```
+
+**Word budget per thesis:** ~600-900 words for supporting theses, ~1,000-1,500 words for the **load-bearing thesis** (the one carrying the bull edge).
+
+### Load-bearing thesis — deeper structure
+
+Whichever thesis is the load-bearing one (the offensive pillar from Phase 10 — could be margin expansion, unit growth, capital return, ARPU, anything) warrants **deeper sub-structure** than a single Mechanism paragraph:
+
+- If the load-bearing thesis has a **multi-lever build** (a margin bridge, a revenue-build, a balance-sheet walk), break the Mechanism into labelled sub-sections — one per lever:
+
+```markdown
+### Lever (a) — [name]: [magnitude FY+1 / FY+2 / FY+3]
+
+[~150 words explaining: what the lever IS, why it has the directional sign in the forecast period, where the magnitude comes from, what disclosure or analog supports it.]
+```
+
+Six levers × ~150 words = ~900w mechanism block, which is appropriate for an offensive pillar carrying the upside edge.
+
+### What NOT to include in each thesis
+
+- **"Magnitude vs Street" sub-blocks.** Edge-vs-sell-side materiality math (e.g., "+170bps above CJ at 34.1%") belongs in `working/pillars_audited.md` as the analytical record showing where the edge is sized. The memo should describe **mechanism + evidence + sizing in absolute terms** (e.g., "+€247M of gross profit per 100bps × $16-20/share"), not analyst-materiality comparisons against named anchors.
+- **Editorialising closes.** Lines like "this is the defensive thesis" or "this matches Wolfe-mid" are repetitive. The structure of evidence carries the offensive/defensive distinction without explicit labels.
+- **Model-output decompositions in parentheses.** Lines like "(model output: Premium segment GM 37.3% × 90.7% of revenue)" add noise. Keep headline numbers; suppress the decomposition arithmetic unless it's the central point.
+
+### Section 4 — Risks (1 page)
+
+Steel-manned counter-theses from Phase 9. **Section title: just "Risks"** (no "Steel-Manned Counter-Pillars" subtitle).
+
+```markdown
+# 4. Risks
+
+[1-paragraph framing: which counter-theses survived steel-manning and which were dropped, with a sentence on why each dropped one was rejected.]
+
+## Risk 1 — [title]
+
+**Bear claim.** [Paragraph stating the strongest version of the counter-argument with specific numbers.]
+
+**Why I still hold the call:**
+- [Reason 1 with specific evidence]
+- [Reason 2]
+- [Reason 3]
+
+**Severity if it plays out.** [Bear PT impact + which killing condition catches it.]
+
+---
+
+[Repeat for Risk 2, 3 as applicable. Typically 2-3 risks survive.]
+```
+
+### Section 5 — Valuation (1-2 pages)
+
+Compressed Phase 11 model output. Don't reproduce the model — summarise it. **Body keeps: envelope → tornado → headline equity bridge. Methodology + WACC build move to Appendix A.**
+
+```markdown
+# 5. Valuation
+
+## Bull / Base / Bear envelope
+
+| Scenario | PT | vs Spot | Trigger |
+|---|---|---|---|
+| **Bear** | **$[A]** | **−[B]%** | <ul><li>[Bear mechanic 1]</li><li>[Bear mechanic 2]</li><li>[Bear mechanic 3]</li></ul> |
+| **Base** | **$[X]** | **+[Y]%** | <ul><li>[Base mechanic 1 — anchored to specific thesis]</li><li>[Base mechanic 2]</li><li>[Base mechanic 3]</li></ul> |
+| **Bull** | **$[C]** | **+[D]%** | <ul><li>[Bull mechanic 1 — Thesis stack at upper end]</li><li>[Bull mechanic 2]</li><li>[Bull mechanic 3]</li><li>[Bull mechanic 4 — multiple expansion / WACC compression if applicable]</li></ul> |
+
+[Note: bull mechanics live INSIDE the Trigger column, not as a standalone block below. A standalone bull-case-mechanics block reads as an orphan.]
 
 ## Tornado — top 5 assumptions by target leverage
-1. [Assumption] — ±[%] target impact
-2. [Assumption] — ±[%]
-3. [Assumption] — ±[%]
-4. [Assumption] — ±[%]
-5. [Assumption] — ±[%]
 
-## Comps cross-check
-| Peer | Fwd P/E | Fwd EV/EBITDA |
-|---|---|---|
-| [TICKER] | [X] | [X] |
-| [Comp 1] | [X] | [X] |
-| [Comp 2] | [X] | [X] |
-| Median (n=[N]) | [X] | [X] |
+| Rank | Assumption | ± PT impact | Linked thesis |
+|---|---|---|---|
 
-[1–2 sentences: where TICKER trades vs. peers and why the gap is justified or temporary]
+[1-2 sentence read on diversification: are top assumptions clustered or diffuse? Is the thesis one-pillar fragile or multi-pillar?]
 
-Full model: `deliverables/[ticker]_model.xlsx`
+## Headline equity bridge
+
+[2-3 line summary: EV + net cash = equity / shares = per-share USD. Pointer to Appendix A for full mechanics.]
+
+Full DCF mechanics, WACC build, and sensitivity in Appendix A.
 ```
 
-### Section 7 — What would change my mind (¼–½ page)
+**Do NOT include in Section 5:**
+- Standalone "Methodology" subsection in body (1-2 sentences inline is enough; full methodology in App A)
+- WACC build in body (moves to App A)
+- Risk/reward skew prose explanation (let the envelope table speak)
+- Comps cross-check (demoted to optional; belongs in working files unless comparables analysis is part of the thesis)
+- Sell-side reconciliation (demoted to optional; same logic)
 
-**Verbatim from Phase 10 `killing_conditions.md`. No paraphrasing.**
+### Section 6 — Catalysts and Killing Conditions (1 page)
+
+**Killing conditions VERBATIM from Phase 10** (with Pillar → Thesis rename only).
 
 ```markdown
-# What Would Change My Mind
+# 6. Catalysts and Killing Conditions
 
-These are the pre-specified conditions that would invalidate the thesis. If any trigger, the pillar dies and the rating must be revisited.
+[1-paragraph framing: KCs are the defensibility lock; each is pre-specified, observable, thesis-linked.]
 
-## For Pillar 1 — [title]
-- [killing condition 1 verbatim from `working/killing_conditions.md`]
-- [killing condition 2 verbatim]
-- [killing condition 3 verbatim]
+## Catalyst calendar
 
-## For Pillar 2 — [title]
-- [verbatim]
-- [verbatim]
-
-## For Pillar 3 — [title]
-- [verbatim]
-- [verbatim]
-
-## Catalyst calendar (when to check)
-| Date | Event | Conditions to monitor |
+| Date | Event | KC tested |
 |---|---|---|
-| [date] | [earnings / IR day / industry data] | [which conditions are testable] |
-| [date] | [event] | [conditions] |
+
+## Killing conditions (verbatim, thesis-linked)
+
+### Thesis 1 — [title]
+1. [verbatim from working/killing_conditions.md, with Pillar → Thesis rename]
+2. [verbatim]
+3. [verbatim]
+
+[Repeat for Thesis 2, Thesis 3.]
+
+### Counter-thesis triggers (bear monitoring)
+- **C1.1** ([title]): [verbatim]
+- **C2.1** ([title]): [verbatim]
 ```
 
-This section is the **defensibility lock**. At interviews when asked *"what would change your view?"*, you read this section.
+### Appendix A — Discounted Cash Flow (1-2 pages)
+
+Full DCF mechanics — what got compressed out of Section 5. Includes WACC build (moved from body).
+
+```markdown
+# Appendix A — Discounted Cash Flow
+
+## Methodology
+
+[1 paragraph: FCFF or DCF-of-equity? Terminal method (exit multiple / Gordon / both)? Mid-year vs end-of-year discounting? SBC add-back yes/no? Working currency and FX convention. These four choices should mirror what was committed in Phase 11.]
+
+## Explicit FCFF schedule
+
+| FY | EBIT | Tax rate | NOPAT | + D&A | + ΔWC | − Capex | **FCFF** |
+|---|---|---|---|---|---|---|---|
+
+[Brief notes on tax curve, working capital assumptions.]
+
+## Discount factors and present value
+
+| FY | t (years) | Disc factor | FCFF | **PV** |
+|---|---|---|---|---|
+
+## Terminal value
+
+[Method + math.]
+
+| Scenario | Multiple | FY[N+5] [terminal driver] | Terminal value | PV |
+|---|---|---|---|---|
+
+## WACC build
+
+| Component | Value | Source |
+|---|---|---|
+| Risk-free rate | | |
+| Equity risk premium | | |
+| Beta | | |
+| **Cost of equity (CAPM)** | | |
+| Pre-tax cost of debt | | |
+| After-tax cost of debt | | |
+| Equity / debt weights | | |
+| **WACC** | | |
+
+[1-paragraph WACC sensitivity note — alternative beta or peer-median check.]
+
+## Equity bridge
+
+| Component | Value |
+|---|---|
+| PV of explicit FCFF | |
+| PV of terminal value | |
+| **Enterprise Value** | |
+| + Net cash | |
+| **Equity Value** | |
+| ÷ Diluted shares | |
+| Per share (local currency) | |
+| × FX | |
+| **Per share (USD)** | |
+| Spot price | |
+| **Implied return** | |
+
+## Sensitivity (WACC × Exit multiple)
+
+[Table showing PT range across the meaningful sensitivity envelope.]
+```
+
+### Appendix B — Key Model Assumptions (½-1 page)
+
+Drill-down on the most important forward assumptions. Content varies by thesis type — pick the schedules that are load-bearing:
+
+- **For margin theses**: GM bridge table by lever, Ad-Supp / segment GM trajectory, OpEx schedule by line item
+- **For volume theses**: Subscriber / unit roll, conversion / penetration assumptions, retention / churn schedule
+- **For capital-return theses**: Buyback schedule, dividend schedule, share-count walk, leverage trajectory
+- **For all theses**: Tax curve, share count walk
+
+```markdown
+# Appendix B — Key Model Assumptions
+
+## [Schedule 1 — the most load-bearing forward assumption]
+[Table.]
+
+## [Schedule 2]
+[Table.]
+
+## OpEx schedule (% of revenue)
+| FY | [Lines as applicable] | **Total OpEx** |
+|---|---|---|
+
+## Tax curve (forward effective rate)
+| FY | Effective tax rate | Rationale |
+|---|---|---|
+
+## Share count schedule
+| FY | Diluted shares | Detail |
+|---|---|---|
+
+*Working archive in `working/`. Live model: `deliverables/[ticker]_model.xlsx`.*
+```
 
 ---
 
 ## PASS NOTE FORMAT
 
-When Phase 7 committed to PASS or Phase 12 didn't converge. Same file path (`deliverables/[ticker]_pitch.md`), shorter (1–2 pages):
+When Phase 7 committed to PASS or Phase 12 didn't converge. Same file path (`deliverables/[ticker]_pitch.md`), shorter (1-2 pages):
 
 ```markdown
 # [TICKER] — PASS
@@ -262,115 +420,195 @@ Date: [YYYY-MM-DD] | Current price: $[Z]
 - Strongest counter: [what made the steel-man too credible to overcome]
 
 ## Where the case is interesting
-[1–2 strongest reasons someone might be long or short. Don't dismiss — acknowledge legitimate arguments.]
+[1-2 strongest reasons someone might be long or short. Don't dismiss — acknowledge legitimate arguments.]
 
 ## Why we don't take them
-[Specific reasons: insufficient evidence, asymmetry already priced, multiple-expansion risk, etc. Cite Phase 6 / Phase 9 work.]
+[Specific reasons: insufficient evidence, asymmetry already priced, multiple-expansion risk. Cite Phase 6 / Phase 9.]
 
 ## Conditions for revisiting
 - [Event 1, e.g., "If mgmt discloses cohort retention at next investor day"]
 - [Event 2, e.g., "If price drops to $[X] (-15% from current) without fundamental deterioration"]
 - [Event 3]
 
-## Coverage status
-Re-evaluate after [event / quarter / event window].
-
 ## Reference materials retained
-[paths to working/ files in case future revisit needs the prior work]
+[paths to working/ files]
 ```
 
-Pass notes are valuable — they document disciplined non-action.
+---
+
+## Build pipeline — DOCX + PDF
+
+### One-time tooling setup (macOS)
+
+```bash
+brew install pandoc pango
+pip install weasyprint
+# macOS pango binding requires DYLD_LIBRARY_PATH at runtime (handled in build_memo.sh)
+```
+
+### Per-project setup at Phase 13 start
+
+```bash
+cd "~/Claude Projects/Equity Research/[TICKER]"
+cp ~/.claude/skills/equity-research-customised-process/assets/build_memo.sh working/
+cp ~/.claude/skills/equity-research-customised-process/assets/memo_style.css working/
+# Edit working/memo_style.css @bottom-left footer with actual ticker/rating/PT/author/date
+```
+
+### YAML frontmatter conventions
+
+Pandoc renders the YAML title/subtitle/author block as `<header class="title">` in HTML5 — the shipped CSS styles this as a sell-side cover. **Do not also include a `# TICKER` h1 heading in the body** — that produces a duplicate cover title.
+
+```yaml
+---
+title: "[Company name] ([Exchange]: [TICKER])"
+subtitle: "[LONG/SHORT] | Price target $[PT] ([+/-X%]) | YYYY-MM-DD"
+author: "[Your name]"
+---
+```
+
+### TOC convention
+
+- **Memos ≤10 pages**: no TOC. Pandoc inserts TOC between title block and body, which collides with the cover layout (rec box + financials end up after the TOC instead of right under the title).
+- **Memos >10 pages**: include `--toc --toc-depth=1` if desired. Each h1 then appears in TOC; h2/h3 are excluded.
+
+The shipped `build_memo.sh` defaults to **no TOC**. Add `--toc --toc-depth=1` to both pandoc invocations if you want one.
+
+### Build command
+
+```bash
+cd "~/Claude Projects/Equity Research/[TICKER]"
+bash working/build_memo.sh [TICKER]
+```
+
+Outputs:
+- `deliverables/[ticker]_pitch.docx`
+- `deliverables/[ticker]_pitch.pdf`
+
+### Page break behaviour
+
+The shipped CSS sets `h1 { page-break-before: always }` — each `# Section` heading triggers a new page. Cover (no h1) → page 1. Section 1 → page 2. And so on. Sub-headings (h2, h3) do NOT break pages.
 
 ---
 
 ## Process
 
-### Step 1 — Assemble from working files
+### Step 1 — Pre-Phase-13 internal-consistency audit (DO THIS FIRST)
+
+Before drafting, run the consistency audit per [SKILL.md "Pre-Phase-13 audit checklist"](../SKILL.md):
+
+1. Every pillar magnitude reconciles to the model output within tolerance (or the difference is documented)
+2. Every killing condition links to a pillar claim and to a model assumption
+3. All valuation numbers (PT, bull/base/bear, skew, WACC) trace back to `working/valuation_outputs.yaml` — no manual transcription drift
+4. Every external anchor cited in pillars is traceable to the source file with the data point quoted
+
+If any check fails, fix the working files BEFORE drafting the memo. The memo is a synthesis layer — if the inputs disagree, no amount of memo iteration will fix it.
+
+### Step 2 — Assemble from working files
 
 The skill draws content from:
-- `working/direction.md` → rating, conviction
-- `working/company_brief.md` → Section 2
-- `working/industry_brief.md` → Section 3
-- `working/pillars_audited.md` → Section 4 (pillar statements + evidence)
-- `working/risks.md` → Section 5 (counter-pillars + rejection reasoning)
-- `deliverables/[ticker]_model.xlsx` + `working/model_summary.md` → Section 6
-- `working/killing_conditions.md` → Section 7 (verbatim)
-- `working/phase12_final.md` (or `iterations.md`) → final pillar set + target post-iteration
+- `working/direction.md` → rating
+- `working/company_brief.md` → Section 1 (Business)
+- `working/industry_brief.md` → Section 2 (Industry)
+- `working/pillars_audited.md` → Section 3 (Thesis 1-3)
+- `working/risks.md` → Section 4 (Risks)
+- `working/valuation_outputs.yaml` + `working/model_summary.md` → Section 5 + Appendix A
+- `working/model_assumptions.md` → Appendix B
+- `working/killing_conditions.md` → Section 6 (VERBATIM, with Pillar → Thesis rename)
 
 Use the template at `assets/pitch_template.md` as the scaffold.
 
-### Step 2 — Identify catalysts
+### Step 3 — Identify catalysts
 
-From the analysis, extract 3–5 specific events that will move the stock and date them. Sources:
-- Earnings dates (next 2–3 quarters)
-- Investor days / conferences (from IR calendar)
-- Product launches / FDA decisions / regulatory rulings (from press, transcripts)
-- Macro / industry events relevant to the thesis
-
-### Step 3 — Compose the headline
-
-Most-tightened version of:
-> *"[LONG/SHORT] [TICKER]. Target $[X] ([Y]% [upside/downside]) on [central thesis in ~12–18 words]."*
-
-Example:
-> *"LONG NVDA. Target $1,600 (+22%) on sustained hyperscaler capex + sovereign AI uncovered TAM driving FY27 datacenter revenue 25% above Street."*
+From Phases 5-12, extract 3-5 specific events that will move the stock and date them.
 
 ### Step 4 — Draft full memo
 
-Write to `deliverables/[ticker]_pitch.md`. Target ~2,500–4,000 words, 5–8 pages rendered.
+Write to `deliverables/[ticker]_pitch.md`. Target **5,000-8,000 words, 10-18 pages rendered**.
 
-### Step 5 — Length and discipline check
+### Step 5 — Build DOCX + PDF
+
+```bash
+bash working/build_memo.sh [TICKER]
+```
+
+Verify both outputs open cleanly and the page count is in the 10-18 range.
+
+### Step 6 — Length and discipline check
 
 After draft, verify:
-- Word count 2,500–4,000?
-- Each pillar 300–500 words? If much less, pillar may be thin. If much more, pillar may be padded.
-- Killing conditions verbatim from Phase 10?
+- Word count 5,000-8,000?
+- Page count 10-18?
+- Each thesis 600-900w (load-bearing thesis 1,000-1,500w)?
+- Killing conditions verbatim from Phase 10 (with Pillar → Thesis rename)?
 - Every quantitative claim → source file + page/section?
-- Page 1 alone has the full call (rating, target, pillars one-liners, risks one-liners, catalysts)?
+- Cover page alone contains: rating, PT, current, upside, 5-yr financials?
+- No "Conviction" / "Time Horizon" / 52-week / probability-weighted lines on cover?
+- No "Pillar" anywhere in body (all renamed to "Thesis")?
+- No "Magnitude vs Street" comparisons inside theses (sized in absolute terms instead)?
+- No editorialising thesis closes ("this is defensive...")?
+- "Mechanism" used as the section label inside each thesis (not "Why the call is correct")?
+- Valuation Section: no body methodology paragraph, no body WACC build, bull mechanics inside envelope-table Trigger column?
+- Appendix A present with full DCF + WACC build + sensitivity?
+- Appendix B present with thesis-relevant model assumptions?
 
-### Step 6 — Present to user
+### Step 7 — Present to user
 
 ```markdown
 # [TICKER] Pitch Drafted
 
 - Word count: [X]
-- Estimated pages: [Y]
-- Pillars: [list with word counts each]
+- Page count (PDF): [Y]
+- Theses: [list with word counts each, load-bearing thesis flagged]
 - Killing conditions: [N total]
 - Model output: $[target] ([+/-%])
 
-Saved to: `deliverables/[ticker]_pitch.md`
+Saved to:
+- `deliverables/[ticker]_pitch.md`
+- `deliverables/[ticker]_pitch.docx`
+- `deliverables/[ticker]_pitch.pdf`
 
-Review for tone, sharpness, accuracy. Common asks: 'tighten pillar [N],' 'expand evidence on [N],' 'rewrite section 1,' 'fix [specific section].' When satisfied, say 'finalize.'
+Review for tone, sharpness, accuracy. Common asks: 'tighten thesis [N],' 'expand evidence on [N],' 'rewrite section 1,' 'fix [specific section].' When satisfied, say 'finalize.'
 ```
 
-### Step 7 — Iterate
+### Step 8 — Iterate
 
-User will likely request tone edits, sharpening, expansion. Iterate freely. Section 1 (Pitch Summary) often takes 2–3 passes because it's the verbal-pitch scaffold.
+Expect 2-4 iteration rounds. Common edit patterns:
 
-### Step 8 — Finalize
+- **Structural reshuffles** — section ordering, what goes in body vs appendix
+- **Depth changes** — "expand thesis 2," "compress section 6," "tighten the risks section"
+- **Content cuts** — entire sections may be dropped per user preference ("remove the comps cross-check")
+- **Terminology preferences** — user may rename things ("call them Mechanism not Driver")
+- **Format preferences** — bullets vs prose balance, table layouts
+
+These are iteration discovery, not failures. Capture stylistic preferences in `~/.claude/projects/-Users-[user]/memory/` (auto-memory) if they look settled across multiple memos — the next first-draft should match the established convention rather than re-iterating from defaults.
+
+After each iteration, rerun `bash working/build_memo.sh [TICKER]` to regenerate outputs.
+
+### Step 9 — Finalize
 
 When user says "finalize":
 
 ```markdown
 ✅ [TICKER] research complete.
 
-Rating: [X] | Target: $[Y] ([Z]% upside/downside) | Conviction: [Level]
+Rating: [X] | Target: $[Y] ([Z]% upside/downside)
 
-Pillars: [N] surviving
+Theses: [N] surviving
 Killing conditions to monitor: [M]
 Next catalyst: [event] on [date]
 
 Deliverables:
-  - Pitch memo: deliverables/[ticker]_pitch.md
+  - Pitch memo (md + docx + pdf): deliverables/[ticker]_pitch.{md,docx,pdf}
   - Model: deliverables/[ticker]_model.xlsx
 
 Research archive (working files retained):
   - Phase 1 sources: filings/, transcripts/, ir-materials/, sell-side/
-  - Phase 2–10 working files: working/
-  - Phase 11 model summary + Phase 12 iteration log
+  - Phase 2-10 working files: working/
+  - Phase 11 model + valuation_outputs.yaml
+  - Phase 12 iteration log
 
-Live monitoring: after each earnings event or material news, check `working/killing_conditions.md`. If a condition triggers, the pillar dies and rating must be revisited.
+Live monitoring: after each earnings event or material news, check `working/killing_conditions.md`. If a condition triggers, the thesis dies and rating must be revisited.
 
 Workflow ended.
 ```
@@ -378,13 +616,13 @@ Workflow ended.
 ## Style notes
 
 - **Plain English over jargon.** Audience is a PM or interviewer — sharp but not pretentious.
-- **Quantify everything.** Pillars without numbers are vibes.
+- **Quantify everything.** Theses without numbers are vibes.
 - **Cite religiously.** Every quantitative claim → source (file + page).
 - **Lead with the answer.** Each section opens with the conclusion, then evidence.
-- **Tables for comparisons.** Prose for arguments.
-- **Confident, not hedged.** Avoid "world-class," "best-in-class," "compelling growth." Use neutral descriptive language with quantified claims. Confident analysts don't need superlatives.
+- **Tables for comparisons.** Prose for arguments. **Balanced bullets + prose** inside each thesis.
+- **Confident, not hedged.** Avoid "world-class," "best-in-class," "compelling growth." Use neutral descriptive language with quantified claims.
 - **No first-person plural marketing voice.** Use "I" (it's your view) or impersonal ("the data shows").
-- **Killing conditions VERBATIM from Phase 10.** Never paraphrase between phases.
+- **Killing conditions VERBATIM from Phase 10** (with Pillar → Thesis rename only).
 
 ## What this is NOT
 
@@ -395,11 +633,18 @@ Workflow ended.
 
 ## Common failure modes
 
-- **Paraphrasing killing conditions**: kills the discipline. Section 7 must be verbatim from Phase 10.
-- **Padding pillars to fill space**: if a pillar can't honestly fill 300 words, it's thin. Better 2 strong pillars than 4 padded.
-- **Burying the lede**: page 1 must be pitchable in 60 seconds. If a reader has to dig to page 3 for the rating, structure failed.
-- **Missing citations**: every claim with a number needs a source. Otherwise it's an assertion, not analysis.
-- **Confusing memo and working archive**: the memo references but doesn't reproduce briefs. Copy-pasting 1,000 words from `company_brief.md` = padding.
+- **Paraphrasing killing conditions**: kills the discipline. Section 6 must be verbatim from Phase 10.
+- **Pure-bullet thesis sections**: sparse, reads as a list of claims. Use balanced prose + bullets.
+- **Pure-prose thesis sections**: hard to scan, claims merge. Same fix.
+- **"Magnitude vs Street" math inside thesis body**: belongs in working files. Memo describes mechanism + evidence + absolute-terms sizing.
+- **Editorialising thesis closes**: "this is the defensive thesis" / "this matches Wolfe-mid." Drop — structure carries the role.
+- **Bull case mechanics outside envelope table**: orphan block. Fold into Trigger column.
+- **Methodology paragraph in Section 5 body**: redundant. 1-2 sentences inline + full method in Appendix A.
+- **WACC build in body**: moves to Appendix A.
+- **Missing DCF appendix**: undermines interview defensibility.
+- **No cover page**: just opening at `# 1` is sell-side malpractice. Use YAML title block + rec table + 5-yr financials.
+- **`# TICKER` h1 duplicating YAML title**: drop the h1; let YAML render the cover.
+- **TOC sandwich**: pandoc default puts TOC between title and body. For memos ≤10 pages, omit TOC.
 - **First-person plural marketing voice**: "we believe," "we see compelling opportunity" — analyst writing, not equity-marketing writing.
 
 ## Critical: the memo as accountability mechanism

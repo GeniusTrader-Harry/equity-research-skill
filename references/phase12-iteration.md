@@ -14,6 +14,45 @@ The goal is **convergence**: the model and the pillars should tell the same stor
 
 There are 4 standard ways the model surprises you. Each has a defined response.
 
+## Pre-step — pillar ↔ model reconciliation gate
+
+Before treating a discrepancy as one of the four surprise modes below, run a **mechanical reconciliation** between Phase 8/10 pillars and Phase 11 model output. This catches the silent-error class where the pillar document says one thing and the model produces another — and avoids the user having to catch it manually at memo review.
+
+For each surviving pillar from Phase 10, compare:
+
+| Element | Pillar value (from pillars_audited.md) | Model output (from valuation_outputs.yaml / xlsx) | Delta | Within tolerance? |
+|---|---|---|---|---|
+| Pillar 1 magnitude | e.g., +4-5% FXN ARPU FY28 | e.g., +4.7% FXN | +0.3pp inside band | ✓ |
+| Pillar 2 magnitude | e.g., 35.5-36.5% FY28 GM | e.g., 35.8% | inside band | ✓ |
+| Pillar 3 magnitude | e.g., 365-375M FY28 subs | e.g., 365M | at low end of band | ✓ |
+
+**Tolerances** (proposed defaults; user can override per pillar):
+
+- Margin / rate pillars: ±50bps
+- Growth-rate pillars: ±100bps
+- Unit / count pillars: ±5%
+
+### Resolution decision tree — when reconciliation fails
+
+If any pillar's model output lies outside its claimed magnitude band, follow this decision tree rather than treating it as ad-hoc surprise:
+
+1. **Is the gap within tolerance?** If yes, document the small drift in the model_summary.md reconciliation table and move on. No revision needed.
+
+2. **If outside tolerance — which side is more defensible?**
+   - The **pillar** was written from primary research, sell-side anchors, and management commentary. If that evidence is robust, the model assumption is probably the loose joint — re-examine which model input is producing the gap.
+   - The **model** is a mechanical synthesis of multiple assumption choices. If a pillar magnitude was set too aggressively in Phase 8 without working backward through the model, the pillar is the loose joint.
+   - Ask: where would I have higher confidence if I had to bet? That's the side to keep.
+
+3. **What's the minimum-assumption change that closes the gap?** Don't restructure the whole thesis if a single assumption flex closes the gap. Examples (generalised, content-agnostic):
+   - If a margin pillar is +200bps above model: probably a pricing-flow-through assumption is too modest, OR a cost-line headwind in the model is too steep. Touch the one assumption that has the cleanest causal link to the pillar's mechanism, not multiple at once.
+   - If a volume pillar is below the model: check whether a conversion-ratio assumption or a geographic mix-weight is inconsistent with the pillar's evidence.
+
+4. **Document the alternative considered.** In `working/phase12_iteration.md`, write down the alternative resolution paths you considered AND why you chose the one you chose. This is the audit trail when the user revisits the workflow in a future round.
+
+5. **Update both sides and re-reconcile.** If you changed the model, the new model output may shift other pillars' reconciliation — rerun the table. If you changed a pillar, the pillar's killing conditions may need recalibration (see Phase 10 Gate D).
+
+Only after the reconciliation gate is clean should you proceed to interpret remaining gaps via the four surprise modes below.
+
 ### Surprise 1 — Math doesn't reach the implied target
 
 **Symptom**: pillars imply 18% upside; model spits out 9%.

@@ -57,50 +57,85 @@ Skill presents the candidate killing conditions and asks user to:
 
 If the user **can't accept** any killing conditions for a pillar, kill the pillar. A pillar without falsifiable conditions is unfalsifiable — i.e., not a defensible analytical claim.
 
-## Check 2 — Material (skill computes mechanically)
+## Check 2 — Material (two sub-checks: edge + thesis)
 
-### What materiality means
+Materiality has two distinct questions. A pillar can be material under one and not the other. Both should be computed.
 
-Does the pillar's claim, if true, move the target price by enough to matter? **Threshold: ≥10% target price impact.** Pillars below this threshold are not worth being thesis pillars — they may be true but they don't drive the rating.
+### 2A — Edge materiality
 
-### Mechanic
+**Question**: does the pillar's *edge over Street* move PT by enough to matter?
 
-Skill runs the pillar's quantitative claim through a simplified model approximation:
+**Mechanic**:
+1. Take the pillar's magnitude **vs Street** (the differential, not the absolute level)
+2. Flow through model: GP delta → OI delta (apply flow-through %) → NI (after tax) → EPS (÷ shares) → price/share (× multiple) → convert FX if needed
+3. **Divide by spot price** to get % impact
 
-1. **Identify the driver** the pillar moves (from Phase 4 tree)
-2. **Compute the dollar impact** of the pillar's magnitude on the relevant P&L line
-3. **Translate to EPS** (or FCF, depending on what drives the model)
-4. **Apply the relevant multiple** (forward P/E from comps, or DCF terminal multiple)
-5. **Compare to current price** to get % target move
+**Threshold**: ≥10% of spot price.
 
-### Example
+**What this tests**: differentiated insight. If all pillars fail this, the thesis is **directionally Street-aligned** with no contrarian edge. That's a valid posture for quality compounders but should be acknowledged — it changes how the trade is pitched (alignment + setup, not edge + asymmetry).
+
+### 2B — Thesis materiality
+
+**Question**: is the pillar *load-bearing* — would removing it (assuming a bear case for this driver) collapse the trade?
+
+**Mechanic**:
+1. Take the pillar's magnitude **vs a defensible bear-case alternative** for this driver (not vs Street — vs the no-growth or flatline case)
+2. Flow through the model the same way
+3. **Divide by spot price** (or by the analyst's own PT — pick one and be consistent)
+
+**Threshold**: ≥10% of spot price.
+
+**What this tests**: structural necessity. If a pillar fails 2B, it's a "free" upside — not load-bearing — and shouldn't be a pillar at all (it's a catalyst or sub-driver).
+
+### When each matters
+
+| Edge (2A) | Thesis (2B) | Pillar type |
+|---|---|---|
+| High | High | High-conviction differentiated — rare; treat as the headline pillar |
+| Low | High | **Defensive load-bearing** — Street-aligned but structurally necessary. Common for quality compounders. Keep but flag as defensive |
+| High | Low | Differentiated but doesn't move PT enough — probably a catalyst, not a pillar |
+| Low | Low | Drop — neither edge nor load-bearing |
+
+### Example (single pillar, both sub-checks)
 
 **Pillar claim**: GM expands +400bps to 48% in FY27 vs Street 44%.
-**Computation**:
-- 400bps × FY27 revenue $12B = $480M incremental gross profit
-- Assume passes through to operating profit (modulo OpEx ratio holding): ~$400M operating profit
-- After 25% tax: ~$300M net income
-- ÷ 1.2B shares = $0.25 EPS uplift
-- × 25x P/E (current multiple) = $6.25 / share
-- Current price $145 → +4.3%
 
-**Verdict**: 4.3% < 10% threshold. **Marginal/sub-threshold pillar.**
+**2A — Edge materiality (vs Street 44%)**:
+- 400bps × $12B FY27 revenue = $480M GP delta vs Street
+- ~$400M OI → ~$300M NI → $0.25 EPS → × 25x = $6.25/share
+- ÷ $145 spot = **+4.3% → ⚠ Sub-threshold edge**
+
+**2B — Thesis materiality (vs bear-case: GM stays at current 42% with no expansion)**:
+- 600bps × $12B = $720M GP delta vs bear
+- ~$600M OI → ~$450M NI → $0.38 EPS → × 25x = $9.4/share
+- ÷ $145 = **+6.5% → ⚠ Borderline thesis**
+
+**Verdict**: pillar is **neither edge nor strongly load-bearing**. Sharpen or drop.
 
 ### Output
 
-Skill produces a materiality scorecard:
+Materiality scorecard with both columns:
 
-| Pillar | Driver | Magnitude vs Street | EPS impact | Target impact | Verdict |
-|---|---|---|---|---|---|
-| 1. GM expansion | GM% | +400bps | +$0.25 | +4.3% | ⚠ Sub-threshold |
-| 2. Software ARR | Revenue | +$1.5B | +$1.10 | +18.9% | ✓ Material |
-| 3. Op leverage | OpEx% | -200bps | +$0.50 | +8.6% | ⚠ Marginal |
+| Pillar | Edge vs Street (2A) | Thesis vs bear (2B) | Type |
+|---|---|---|---|
+| 1. GM expansion | +4.3% ⚠ | +6.5% ⚠ | Marginal — sharpen or drop |
+| 2. Software ARR | +18.9% ✓ | +24.2% ✓ | High-conviction differentiated |
+| 3. Op leverage | +3.1% ⚠ | +12.4% ✓ | Defensive load-bearing |
 
-User decides what to do with sub-threshold or marginal pillars:
-- **Drop**: most common response
-- **Sharpen**: if there's a more aggressive defensible version of the magnitude
-- **Stack**: combine 2 marginal pillars into one if they hit related drivers
-- **Keep with caveat**: rare; only if the pillar is unusually strong on other tests
+### Action rules
+
+- **Both fail**: drop the pillar
+- **Only 2A passes**: pillar is a catalyst, not load-bearing — reframe or drop
+- **Only 2B passes**: defensive load-bearing — keep, flag as defensive in Phase 13 pitch (this is normal for quality compounders aligned with Street direction)
+- **Both pass**: differentiated pillar — headline material in pitch
+
+### Why both checks matter
+
+Phase 9 + Phase 10 catch different failure modes:
+- **2A failing across all pillars** → thesis is Street-aligned. Not a flaw; just means the pitch should emphasize setup (drawdown / catalysts) over edge.
+- **2B failing on any pillar** → that pillar isn't structurally needed. It can be deleted without changing the rating.
+
+Both findings are useful. Don't average them into a single materiality score — keep them separate so the user sees the actual structure of the thesis.
 
 ## Check 3 — Defensible (skill counts evidence)
 
@@ -134,6 +169,71 @@ For each pillar, skill scans the evidence already gathered and counts independen
 | 3. Op leverage | (1) Mgmt LT model, (2) sell-side consensus | ⚠ Fragile-medium (2 sources) |
 
 Soft gate: user can override "fragile" for genuinely **uncovered alpha** — pillars where the whole point is that data is scarce. But the override should be conscious.
+
+## Mechanical integrity gates (run AFTER the 3 quality checks, BEFORE writing outputs)
+
+These are yes/no machine-checkable gates that catch silent-error classes. None of them are judgement-laden — they either pass or fail, and a failure must be fixed (not waived) before Phase 10 outputs are written.
+
+### Gate A — External anchor existence check
+
+**Question**: every external anchor cited as evidence in any pillar must be traceable to the actual source file with the data point quoted.
+
+**Mechanic**:
+1. List every external anchor cited in pillar evidence (sell-side estimate, consensus median, regulatory threshold, industry-report figure, peer benchmark).
+2. For each anchor, confirm:
+   - The source file exists at the claimed path (`sell-side/[firm].pdf`, `working/consensus_map.md`, etc.)
+   - The cited data point actually appears in the source — with the exact metric, year, and value
+   - The forecast horizon claimed is within the source's actual coverage (e.g., does the sell-side note actually cover FY+3? Does CapIQ Median actually have estimates for FY+3 / FY+5?)
+3. Flag any anchor that fails. **Fix the citation or drop the claim — do not waive.**
+
+**Why this exists**: anchors get fabricated mid-workflow when working from memory. Example failure mode: citing "[Vendor] Median FY+3 GM at 35.0%" when [Vendor]'s coverage actually ends at FY+2. The error is invisible to the user unless they re-pull the source.
+
+### Gate B — Decomposition bridge math check
+
+**Question**: any bridge or decomposition cited as evidence (margin bridge, revenue-growth decomposition, balance-sheet walk, EPS bridge) must mechanically sum to the disclosed headline.
+
+**Mechanic**:
+1. For each cited bridge, list every component contribution with its sign (positive / negative) and magnitude.
+2. Sum the components.
+3. Compare the sum to the disclosed headline; difference must be ≤ ±5 units (bps, %, $M — whichever the bridge uses) OR explicitly noted as "residual / rounding."
+4. Flag any bridge where the sum does not reconcile. **Re-verify signs of each component before using the bridge as evidence.**
+
+**Why this exists**: sign convention on bridge components (which way each contribution moves the headline) is easy to get wrong when reading a third-party note quickly. Example failure mode: listing a "Music royalty −200bps" headwind and an "Audiobook −70bps" drag both as positive contributions, producing a bridge that sums to a number meaningfully different from the disclosed headline. The error is invisible until checked mechanically.
+
+### Gate C — Joint killing-condition dependency check
+
+**Question**: for each killing condition, does triggering it invalidate more than one pillar?
+
+**Mechanic**:
+1. For each KC, trace which pillar it falsifies directly.
+2. Then check: would the triggering condition also break the assumption-base of any *other* pillar? (E.g., a KC tied to "no Q3 27 price hike" — does the missing hike also reduce the margin pillar's forward magnitude through its pricing-flow-through lever?)
+3. If yes, document the joint dependency in the KC text itself: *"JOINT Pillar [X] + Pillar [Y] trigger — also breaks ... base PT haircut to ~$..."*
+
+**Why this exists**: joint triggers carry more weight at monitoring time — when one fires, multiple pillars die simultaneously, not just the one named. Surfacing the dependency at Phase 10 prevents the user from learning about it during post-publication monitoring.
+
+### Gate D — KC base-case calibration check
+
+**Question**: under the base-case model projection, would any KC mechanically fire?
+
+**Mechanic**:
+1. For each KC threshold (e.g., "ratio <X%," "metric below Y," "Y/Y delta exceeds Z bps"), look up the base-case projected value for the relevant metric and period.
+2. If the base-case projected value already crosses the KC threshold, the KC is mis-calibrated — it would fire under the thesis's own base case, falsely signaling pillar death.
+3. Recalibrate the threshold OR change the metric: typical fix is to base the KC on Y/Y delta or vs-projection delta rather than absolute level, with the threshold set materially beyond the modeled drift.
+
+**Why this exists**: a KC like *"Sub/MAU stock ratio < 38.5%"* mechanically fires under a base case where the ratio drifts to ~38.2% from mix effects even with the thesis intact. The KC must be calibrated above the modeled drift — e.g., *"Y/Y decline > 150bps"* — to actually represent a thesis-breaking signal.
+
+### Gate output
+
+Run all four gates as a checklist before writing `pillars_audited.md` and `killing_conditions.md`:
+
+| Gate | Status | Notes |
+|---|---|---|
+| A — Anchor existence | ✓ / ✗ | [If ✗: which anchor failed and how it was fixed] |
+| B — Bridge math | ✓ / ✗ | [If ✗: which bridge failed and resolution] |
+| C — Joint KC dependencies | ✓ / ✗ | [If ✗: which KCs were updated to flag joint triggers] |
+| D — KC base-case calibration | ✓ / ✗ | [If ✗: which KCs were recalibrated and how] |
+
+All four must be ✓ before Phase 10 finalises.
 
 ## Final output of Phase 10
 

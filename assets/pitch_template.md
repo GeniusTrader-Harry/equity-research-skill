@@ -1,186 +1,334 @@
-# [TICKER] — [Rating: BUY / HOLD / SELL] — Target $[X], [+/-Y%]
-Date: [YYYY-MM-DD] | Current price: $[Z] | Author: [Name]
-
-**Rating**: [BUY / HOLD / SELL]
-**Target price**: $[X] ([+/-Y%] vs. current $[Z])
-**Conviction**: [Low / Medium / High]
-**Time horizon**: [6mo / 12mo / 18mo]
-
-## In one paragraph
-[1–2 sentence framing of setup + thesis in plain English. This is the 60-second verbal pitch.]
-
-## Pillars (one line each)
-1. **[Pillar 1 title]** — [one-sentence claim with key number]
-2. **[Pillar 2 title]** — [one-sentence claim with key number]
-3. **[Pillar 3 title]** — [one-sentence claim with key number]
-
-## Key risks (one line each)
-1. **[Risk 1]** — [one-sentence counter-pillar]
-2. **[Risk 2]** — [one-sentence counter-pillar]
-3. **[Risk 3]** — [one-sentence counter-pillar]
-
-## Catalysts
-- [Date] — [event] — [why it matters / which pillar it tests]
-- [Date] — [event] — [why it matters]
-- [Date] — [event] — [why it matters]
-
-## What would change my mind (teaser)
-See Section 7. [N] killing conditions; most important: [1 example].
-
+---
+title: "[Company name] ([Exchange]: [TICKER])"
+subtitle: "[LONG/SHORT] | Price target $[PT] ([+/-X%]) | [YYYY-MM-DD]"
+author: "[Author name]"
 ---
 
-# Business
+| | |
+|---|---|
+| **Rating** | **[LONG / SHORT]** |
+| **Price target (12-month)** | **$[PT]** |
+| **Current price** ([YYYY-MM-DD]) | $[spot] |
+| **Upside to target** | **+/-[X]%** |
+| **Market cap** | ~$[Mkt cap] |
+| **Reporting currency** | [USD / EUR / GBP / etc.] [+ FX rate if non-USD output] |
 
-**What & how**: [2–3 sentences on what the company does and how it makes money]
+## Five-year financial estimates ([currency] M)
 
-**Revenue mix** (FY[year]):
-- [Segment 1]: [%] — [1-line description]
-- [Segment 2]: [%] — [1-line description]
-- [Segment 3]: [%] — [1-line description]
+| | **FY[N]A** | **FY[N+1]E** | **FY[N+2]E** | **FY[N+3]E** | **FY[N+5]E** |
+|---|---|---|---|---|---|
+| Revenue | | | | | |
+| Y/Y growth | | | | | |
+| [Key margin] | | | | | |
+| Operating income | | | | | |
+| EBIT margin | | | | | |
+| FCFF | | | | | |
+| [Key driver — subs / units / ASP] | | | | | |
 
-**Scale**: [revenue, EBITDA margin, FCF, employees, geographic split — 3 lines]
+*FY[N]A audited per [filing] filed [date]. Forwards from internal model; full schedule in Appendix A.*
 
-**Management**: [CEO + CFO names, tenure, 1-line track record, insider ownership %]
+# 1. Business Overview
 
----
+## What [Company] does and how it makes money
 
-# Industry
+[2-3 paragraphs: what the business does, how revenue is generated.]
 
-**Market structure**: [TAM with source; growth rate; concentrated vs. fragmented; key secular trend — 2–3 lines]
-
-**Competitive set** (top 3–5):
-| Company | Position | Comment |
-|---|---|---|
-| [Comp 1] | [#X] | [1-line] |
-| [Comp 2] | [#X] | [1-line] |
-| [Comp 3] | [#X] | [1-line] |
-
-**Where [TICKER] sits**: [2–3 sentences — market share, defensibility, moat type with evidence]
-
----
-
-# Thesis Pillars
-
-## Pillar 1 — [short title]
-
-**Claim**: *"[5-element pillar statement verbatim from Phase 10]"*
-
-**Mechanism** (~80–120 words). [Causal story. Why does this happen? What's the underlying business / industry / accounting driver?]
-
-**Evidence** (~120–180 words):
-- [Source 1, with file path or page #]: [verbatim quote or specific data point]
-- [Source 2, with citation]: [data point]
-- [Source 3, with citation]: [data point]
-- [Source 4]: [if applicable]
-
-**Magnitude** (~60–100 words). [Walk through math from driver delta to EPS to target impact.]
-
-**Asymmetry mapping**: Phase 6 asymmetry #[N] ([title]). Why Street has it wrong: [1 sentence].
-
-**Model linkage**: Cell `Assumptions!_[ref]` = [value] vs. Street consensus [value].
-
----
-
-## Pillar 2 — [short title]
-
-[same format]
-
----
-
-## Pillar 3 — [short title]
-
-[same format]
-
----
-
-# Risks (Steel-Manned Counter-Arguments)
-
-These are the strongest arguments for the opposite direction. Considered and rejected, but real.
-
-## Counter-pillar 1 — [title]
-**Bear case**: *"[5-element counter-pillar statement from Phase 9]"*
-
-**Why we still hold the call**: [paragraph from Phase 9 rejection reasoning — specific evidence, not vibes]
-
-**Severity if it plays out**: [estimated target impact, e.g., "would push target to $[X] (-Y%)"]
-
----
-
-## Counter-pillar 2 — [title]
-[same format]
-
----
-
-## Counter-pillar 3 — [title]
-[same format]
-
----
-
-# Valuation
-
-## Central case
-**Methodology**: DCF primary, comps cross-check.
-**Target**: $[X] (= $[Y] DCF, $[Z] comps-implied; weighted [%/%])
-**Upside / downside**: [+/-Y%] vs. current $[current]
-**Implied forward [P/E or EV/EBITDA]**: [Xx] (vs. comp set median [Yx])
-
-## Key DCF assumptions
-| Driver | FY[Y1] | FY[Y3] | FY[Y5] | Terminal |
+| Segment | FY[N] revenue ([currency] M) | % total | Segment GM | FY[N] growth |
 |---|---|---|---|---|
-| Revenue growth | [%] | [%] | [%] | [%] |
-| Gross margin | [%] | [%] | [%] | [%] |
-| Operating margin | [%] | [%] | [%] | [%] |
-| WACC | — | — | — | [%] |
-| Terminal growth | — | — | — | [%] |
+| | | | | |
 
-## Sensitivity
-- Bear-flex (top 2 assumptions to -1σ): $[A] ([-B%])
-- Bull-flex (top 2 assumptions to +1σ): $[C] ([+D%])
+[Optional 1-paragraph deeper economics framing.]
+
+## Product portfolio
+
+| Product | What it is | Pricing | Role |
+|---|---|---|---|
+| | | | |
+
+[1-paragraph: GTM model, customer mix, geographic distribution.]
+
+## Operating economics
+
+| | FY[N-3] | FY[N-2] | FY[N-1] | FY[N] |
+|---|---|---|---|---|
+| Operating margin | | | | |
+| Operating income | | | | |
+
+[2-3 paragraphs explaining the operating trajectory and what it means for the thesis.]
+
+# 2. Industry & Competitive Position
+
+## Market structure
+
+- TAM, growth rate, secular drivers
+- Concentration / fragmentation
+- Upstream / downstream economics
+
+## [Unit economics framing if applicable]
+
+[Industry-specific economic constraint that frames the thesis — e.g., royalty waterfall, take rate, regulatory rate-base.]
+
+## Competitive set
+
+| Player | Owner | [Size metric] | Share | Position |
+|---|---|---|---|---|
+
+[1-paragraph framing: where TICKER sits and the structural read.]
+
+## Moats
+
+| Moat type | Rating | Evidence (≤1 sentence) |
+|---|---|---|
+| Cost / scale | | |
+| Brand | | |
+| Switching costs | | |
+| Network effects | | |
+| Distribution | | |
+| Patents / IP | | |
+| Regulatory | | |
+
+## [Optional] Long-duration competitive threat: [named threat]
+
+[Include ONLY when one competitor poses an asymmetric multi-year share-shift risk. 150+ words: mechanism, asymmetry, data, metric to monitor.]
+
+# 3. Investment Thesis
+
+[1-paragraph framing: how many theses, which is load-bearing (offensive), which are defensive.]
+
+## Thesis 1 — [headline with key number]
+
+**Claim.** [1-2 sentences.]
+
+**Mechanism.**
+
+[Paragraph 1 — structural argument in prose.]
+
+- **[Sub-mechanism].** [Explanation.]
+- **[Sub-mechanism].** [Explanation.]
+
+[Optional Paragraph 2 — tying mechanism to model output.]
+
+**Evidence.**
+
+- [Specific data point with citation]
+- [Source quote, with file path or page #]
+
+## Thesis 2 — [headline] (load-bearing — deeper sub-structure)
+
+**Claim.** [1-2 sentences with headline magnitude.]
+
+**Mechanism — overview.** [Paragraph framing the multi-lever build.]
+
+### Lever (a) — [name]: [magnitude FY+1 / FY+2 / FY+3]
+
+[~150 words: what the lever IS, why it has the directional sign, where the magnitude comes from.]
+
+### Lever (b) — [name]: [magnitude]
+
+[~150 words.]
+
+### Lever (c) — [name]: [magnitude]
+
+[~150 words.]
+
+### Lever (d) — [name]: [magnitude]
+
+[~150 words.]
+
+### Lever (e) — [name]: [magnitude]
+
+[~150 words.]
+
+### Lever (f) — [name]: [magnitude]
+
+[~150 words.]
+
+### Closing the bridge
+
+[Paragraph showing how levers sum to the headline forecast.]
+
+**Evidence.**
+
+- [Source 1]
+- [Source 2]
+
+## Thesis 3 — [headline]
+
+**Claim.** [1-2 sentences.]
+
+**Mechanism.**
+
+[Paragraph 1.]
+
+- **[Sub-mechanism].** [Explanation.]
+
+[Paragraph 2 tying to model output.]
+
+**Evidence.**
+
+- [Source 1]
+
+# 4. Risks
+
+[1-paragraph framing: which counter-theses survived steel-manning, which were dropped + why.]
+
+## Risk 1 — [title]
+
+**Bear claim.** [Strongest version of the counter-argument with numbers.]
+
+**Why I still hold the call:**
+
+- [Reason 1 with specific evidence]
+- [Reason 2]
+- [Reason 3]
+
+**Severity if it plays out.** [Bear PT impact + which KC catches it.]
+
+## Risk 2 — [title]
+
+[Same format.]
+
+# 5. Valuation
+
+## Bull / Base / Bear envelope
+
+| Scenario | PT | vs Spot | Trigger |
+|---|---|---|---|
+| **Bear** | **$[A]** | **−[B]%** | <ul><li>[Bear mechanic 1]</li><li>[Bear mechanic 2]</li><li>[Bear mechanic 3]</li></ul> |
+| **Base** | **$[X]** | **+[Y]%** | <ul><li>[Base mechanic 1 — Thesis-linked]</li><li>[Base mechanic 2]</li><li>[Base mechanic 3]</li></ul> |
+| **Bull** | **$[C]** | **+[D]%** | <ul><li>[Bull mechanic 1 — thesis stack upper-end]</li><li>[Bull mechanic 2]</li><li>[Bull mechanic 3]</li><li>[Bull mechanic 4 — multiple expansion / WACC compression if applicable]</li></ul> |
 
 ## Tornado — top 5 assumptions by target leverage
-1. [Assumption] — ±[%] target impact
-2. [Assumption] — ±[%]
-3. [Assumption] — ±[%]
-4. [Assumption] — ±[%]
-5. [Assumption] — ±[%]
 
-## Comps cross-check
-| Peer | Fwd P/E | Fwd EV/EBITDA |
+| Rank | Assumption | ± PT impact | Linked thesis |
+|---|---|---|---|
+| 1 | | | |
+| 2 | | | |
+| 3 | | | |
+| 4 | | | |
+| 5 | | | |
+
+[1-2 sentences: diversification read.]
+
+## Headline equity bridge
+
+[2-3 lines: EV + net cash = equity / shares = per-share USD.]
+
+Full DCF mechanics, WACC build, and sensitivity in Appendix A.
+
+# 6. Catalysts and Killing Conditions
+
+[1-paragraph framing.]
+
+## Catalyst calendar
+
+| Date | Event | KC tested |
 |---|---|---|
-| [TICKER] | [X] | [X] |
-| [Comp 1] | [X] | [X] |
-| [Comp 2] | [X] | [X] |
-| Median (n=[N]) | [X] | [X] |
 
-[1–2 sentences: where TICKER trades vs. peers and why the gap is justified or temporary]
+## Killing conditions (verbatim, thesis-linked)
 
-Full model: `deliverables/[ticker]_model.xlsx`
+### Thesis 1 — [title]
 
----
+1. [verbatim from working/killing_conditions.md]
+2. [verbatim]
+3. [verbatim]
 
-# What Would Change My Mind
+### Thesis 2 — [title]
 
-Pre-specified conditions that invalidate the thesis. If any trigger, the pillar dies and the rating must be revisited.
+1. [verbatim]
+2. [verbatim]
+3. [verbatim]
 
-## For Pillar 1 — [title]
-- [killing condition 1 verbatim from `working/killing_conditions.md`]
-- [killing condition 2 verbatim]
-- [killing condition 3 verbatim]
+### Thesis 3 — [title]
 
-## For Pillar 2 — [title]
-- [verbatim]
-- [verbatim]
+1. [verbatim]
+2. [verbatim]
+3. [verbatim]
 
-## For Pillar 3 — [title]
-- [verbatim]
-- [verbatim]
+### Counter-thesis triggers (bear monitoring)
 
-## Catalyst calendar (when to check)
-| Date | Event | Conditions to monitor |
+- **C1.1** ([title]): [verbatim]
+- **C2.1** ([title]): [verbatim]
+
+# Appendix A — Discounted Cash Flow
+
+## Methodology
+
+[1 paragraph: FCFF or DCF-of-equity, terminal method, discounting convention, SBC treatment, working currency.]
+
+## Explicit FCFF schedule
+
+| FY | EBIT | Tax rate | NOPAT | + D&A | + ΔWC | − Capex | **FCFF** |
+|---|---|---|---|---|---|---|---|
+
+## Discount factors and present value
+
+| FY | t (years) | Disc factor | FCFF | **PV** |
+|---|---|---|---|---|
+
+## Terminal value
+
+| Scenario | Multiple | FY[N+5] [driver] | Terminal value | PV |
+|---|---|---|---|---|
+
+## WACC build
+
+| Component | Value | Source |
 |---|---|---|
-| [date] | [earnings / IR day / industry data] | [which conditions are testable] |
-| [date] | [event] | [conditions] |
+| Risk-free rate | | |
+| Equity risk premium | | |
+| Beta | | |
+| **Cost of equity** | | |
+| Pre-tax cost of debt | | |
+| After-tax cost of debt | | |
+| Equity / debt weights | | |
+| **WACC** | | |
 
----
+## Equity bridge
 
-*Memo generated via equity-research-customised-process skill. Source archive at `~/Claude Projects/Equity Research/[TICKER]/`.*
+| Component | Value |
+|---|---|
+| PV of explicit FCFF | |
+| PV of terminal value | |
+| **Enterprise Value** | |
+| + Net cash | |
+| **Equity Value** | |
+| ÷ Diluted shares | |
+| Per share (local currency) | |
+| × FX | |
+| **Per share (USD)** | |
+| Spot price | |
+| **Implied return** | |
+
+## Sensitivity (WACC × Exit multiple)
+
+[Sensitivity grid.]
+
+# Appendix B — Key Model Assumptions
+
+## [Schedule 1 — most load-bearing forward assumption — e.g., margin bridge, sub roll, capital walk]
+
+| | FY[N+1] | FY[N+2] | FY[N+3] | FY[N+4] | FY[N+5] |
+|---|---|---|---|---|---|
+
+## [Schedule 2]
+
+| | FY[N+1] | FY[N+2] | FY[N+3] | FY[N+4] | FY[N+5] |
+|---|---|---|---|---|---|
+
+## OpEx schedule (% of revenue)
+
+| FY | [Lines] | **Total OpEx** |
+|---|---|---|
+
+## Tax curve
+
+| FY | Effective tax rate | Rationale |
+|---|---|---|
+
+## Share count schedule
+
+| FY | Diluted shares | Detail |
+|---|---|---|
+
+*Working archive in `working/`. Live model: `deliverables/[ticker]_model.xlsx`.*

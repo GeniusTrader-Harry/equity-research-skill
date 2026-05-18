@@ -76,7 +76,7 @@ In priority order:
 4. **Gartner / Forrester / IDC** via web search (often paywalled, but headline numbers are usually free)
 5. **Trade publications**: e.g., Semiconductor Engineering for semis, Modern Healthcare for health, etc.
 6. **Substack analysts** for the relevant sector
-7. **Institutional / university library subscriptions** if user has access: Bloomberg's BI sector research, Refinitiv industry reports
+7. **University or workplace library subscriptions** if user has accessed: Bloomberg's BI sector research, Refinitiv industry reports
 
 If multiple sources disagree (common for TAM): show the range and pick a sensible midpoint, noting the spread.
 

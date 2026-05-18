@@ -4,6 +4,27 @@
 
 **Output**: `~/Claude Projects/Equity Research/[TICKER]/deliverables/[ticker]_model.xlsx`
 
+## Step 0 — Fresh derivation (mandatory before any assumption is entered)
+
+Phase 11 is the first phase that produces **auditable numbers**. Every assumption used here must be derived from **primary sources** — 20-F / 10-K line items, shareholder letter actuals, sell-side consensus xlsx, `extractions/headline_anchors.md`. Back-of-envelope numbers from Phases 7–10 (share count approximations like "~205M," tax rate assumptions like "~25%," multiple choices like "~25x P/E," GP→OI flow-through estimates like "~75%," and any PT-impact / materiality math) are **NOT** carried over into the model.
+
+The rule:
+- **Pillar STRUCTURE** (which drivers matter, what direction, what magnitudes vs Street) → carried over from Phases 8/10.
+- **Pillar NUMBERS** (specific bps deltas, $ magnitudes, EPS impacts) → re-derived independently in the model.
+
+Specifically re-derive from primary sources:
+- **Shares outstanding** — 20-F FDSO + SBC schedule + buyback program (not "~205M" placeholder)
+- **Tax rate** — 20-F effective rate footnote + jurisdictional mix (not "~25%" placeholder)
+- **Capex intensity** — 20-F historical capex / revenue (not "asset-light, de minimis" handwave)
+- **Working capital** — 20-F NWC components, days-based driver build (not zero)
+- **Cost of debt** — actual interest expense / average debt balance from 20-F (not assumed)
+- **Beta** — derived from 2-3yr weekly returns vs market index (not handed down)
+- **Capital structure weights** — actual debt + equity from BS (not "all equity" simplification)
+
+**Why**: back-of-envelope numbers built up in Phases 7–10 are approximations for *qualitative structuring* (which pillars are defensive vs offensive, which counters matter). Phase 11 is *quantitative precision*. Carrying approximations through compounds error. The track record across previous runs has been: every back-of-envelope chain caught at least one error when surfaced for review. Fresh derivation forces the model to stand on its own.
+
+**Reconciliation, not suppression**: after the model produces base/bull/bear PT and tornado, compare the model output to the pillar magnitudes asserted in `working/pillars_audited.md`. If the model disagrees with a Phase 8/10 pillar magnitude, that's a **Phase 12 surprise trigger** — not an error to silently align away. Flag the surprise honestly; that's exactly what Phase 12 exists to handle.
+
 ## Currency convention (FPIs and multi-currency reporters)
 
 **Two separate decisions** that previous spec versions conflated:
@@ -100,19 +121,48 @@ The driver tree from Phase 4, populated with:
 
 This sheet is the visible "thesis as numbers" — every pillar's claim should be findable here.
 
-### Sheet 2 — 3-Statement (IS / BS / CFS)
+### Sheet 2 — Historical reference (audited 3-statement, no forward projection)
 
-Standard 3-statement model. Reuse `financial-analysis:3-statement-model` patterns. The forecast period is 3–5 years, with explicit links from assumptions sheet to operating lines.
+Audited IS / BS / CFS for the last 3–5 fiscal years from filings — pulled verbatim, used only as historical reference and trend validation. **No forward 3-statement projection is required**: the goal of Phase 11 is a defensible target price via DCF, not a full earnings model. EPS forecasting is downstream of DCF and adds little value if the thesis is FCF-based.
 
-### Sheet 3 — DCF
+Forward periods are built FCFF-only (Sheet 3). Skip a forward 3-statement unless one of:
+- The user explicitly asks for forward EPS / NI guidance for a per-EPS-multiple cross-check
+- The business has material non-operating volatility (large derivative gains, tax volatility, FX-translated below-the-line) that distorts FCFF and requires a full NI walk
+- The pitch will be quoted at a P/E multiple rather than DCF (rare for the thesis-first workflow)
 
-Reuse `financial-analysis:dcf-model` patterns. Key components:
-- Free cash flow projection (5–10yr explicit forecast)
-- WACC calculation (CAPM-based; with sensitivity to risk-free rate, beta, ERP)
-- Terminal value (perpetuity growth + exit multiple — both methods, then triangulate)
-- PV calculation
-- Equity value bridge (enterprise value − net debt − minority interest + investments → equity → divide by shares)
-- Implied share price
+Otherwise: forecasted P&L lives in the FCFF build on Sheet 3 (EBIT × (1−t) + D&A − Capex − ΔWC) — no need to extend NI / EPS forward.
+
+### Sheet 3 — DCF (FCFF-based)
+
+Forward forecast is FCFF-only. Build per year FY+1 through FY+5 (5yr explicit):
+
+```
+FCFF (Unlevered Free Cash Flow)
+  = EBIT × (1 − tax rate)        ← NOPAT
+  + D&A                          ← non-cash add-back (incl. IFRS-16 lease depreciation)
+  − ΔWorking Capital             ← cash absorbed/released by growth
+  − Capex                        ← maintenance + growth capex
+```
+
+Then:
+- Discount each year's FCFF at WACC (CAPM-based; sensitivity to risk-free rate, beta, ERP)
+- Terminal value: **exit EV/EBITDA multiple primary** (TV = FY+5 EBITDA × exit multiple). Gordon perpetuity (TV = FCFF_n+1 / (WACC − g)) is an **optional cross-check** for businesses already in steady-state. See "Choosing the terminal method" below.
+- PV(explicit) + PV(terminal) = Enterprise Value
+- EV − Net Debt − Minority Interest + Investments = Equity Value
+- ÷ Diluted shares outstanding (including SBC dilution + convertible if-converted) = Per-share value (in working currency)
+- × FX rate = Per-share value (output currency)
+
+Why FCFF (not FCFE / not NI-based DCF): FCFF discounted at WACC gives Enterprise Value cleanly. Net Income depends on capital structure (interest costs, tax shield) and obscures the operating economics. For a thesis-first DCF, you want the operating-cash-flow-to-value link clean.
+
+### Choosing the terminal method
+
+**Default: exit EV/EBITDA multiple.** Anchor to (a) closest peer comp current forward multiple, (b) sell-side PT-implied exit multiples reverse-engineered from published PTs, (c) target company's own historical trading range. Build base/bull/bear at three multiples reflecting different terminal business-state assumptions (e.g., "mid-cycle consumer subs," "premium platform," "mature DSP").
+
+**Gordon perpetuity is appropriate ONLY when** the forecast endpoint genuinely represents steady-state: stable margin profile, growth converging to nominal GDP, no remaining re-rating optionality. For mid-transition platforms (consumer subs ramping toward platform economics, hardware mid-product-cycle, energy-transition names, mid-rollout SaaS), Gordon imposes a perpetual-growth ceiling that structurally underprices market-implied terminal optionality and produces an austere implied terminal multiple (often <10x EBITDA when peer-set trades 15-22x). That's a methodology artifact, not the business.
+
+**Test for Gordon-suitability**: at the forecast endpoint, would you expect revenue growth to stay within ±200bps of terminal g indefinitely, and EBIT margin to be ±100bps of the endpoint? If yes, Gordon is defensible. If no, exit-multiple is the only honest method.
+
+If both methods are computed, triangulate by stating each separately — do not average them silently into a single number.
 
 ### Sheet 4 — Sensitivity & Tornado
 
@@ -159,6 +209,19 @@ SG&A growth        ±100bps      [█]                 ±2%
 - The **top 2–3 bars** are your load-bearing assumptions. Your strongest pillars should sit on these.
 - If a pillar is about an assumption near the bottom (e.g., tax rate), it's not a real thesis pillar — it can't move the target enough.
 - If **one bar is dramatically longer than the others** (e.g., one assumption explains 75%+ of variance), the thesis is one-pillar fragile (Phase 12 surprise mode #3).
+
+## Methodology choices — ask user explicitly at Phase 11 start
+
+Four choices materially affect the PT and downstream documents. The skill must SURFACE these as explicit questions at Phase 11 start rather than silently default — defaults vary by sector, and a buried choice causes silent drift if user discovers it later.
+
+| # | Question | Default | Why surface |
+|---|---|---|---|
+| 1 | **FCFF — SBC add-back or not?** | No (more honest — SBC is a real economic cost; dilution captured in share count instead) | If user comes from a school that historically adds SBC back to FCF (sell-side convention pre-2020), they'll expect the higher FCF. Surfacing the choice prevents disagreement at memo review |
+| 2 | **Terminal method — exit EV/EBITDA, Gordon perpetuity, or both?** | Exit multiple for platform / mid-transition; Gordon for steady-state financials / utilities | Different sector conventions; Gordon imposes a methodology ceiling that may not reflect economic reality (see "Choosing the terminal method" above) |
+| 3 | **Discount timing — mid-year or end-of-year?** | Mid-year (more accurate; cash flows occur throughout year not at year-end) | Both defensible; choice affects PT by 3-5%. User should commit upfront |
+| 4 | **Output FX rate — current spot at memo date, year-end forward, or both?** | Current spot at memo date | For multi-currency reporters; the spot date should be stamped in valuation_outputs.yaml |
+
+Ask all four at Phase 11 start. Document the answers in `working/valuation_outputs.yaml` (see Step 7) — these are the inputs every other doc reads from.
 
 ## Process
 
@@ -254,6 +317,112 @@ Committed direction: [LONG / SHORT] (from Phase 7)
 ```
 
 Save to `working/model_summary.md` for reference in Phase 12.
+
+### Step 7 — Finalise: single source of truth + xlsx-vs-md audit
+
+Phase 11 must produce a **single source of truth** for all valuation outputs that every downstream document (Phase 12 iteration log, Phase 13 memo, killing conditions check) reads from. Manual transcription of PT / bull / bear / WACC across multiple markdown files causes silent drift.
+
+#### Step 7a — Produce `working/valuation_outputs.yaml`
+
+```yaml
+# Single source of truth for valuation outputs.
+# Every downstream doc (pillars_audited.md, killing_conditions.md, phase12 iteration log,
+# phase13 memo) reads from this file. Do NOT manually transcribe these values elsewhere.
+
+ticker: "[TICKER]"
+valuation_date: "YYYY-MM-DD"
+spot_price:
+  value: 422.11
+  currency: "USD"
+  source: "[exchange + timestamp]"
+
+methodology:
+  fcff_sbc_addback: false           # Step-0.5 question 1
+  terminal_method: "exit_multiple"  # Step-0.5 question 2 — exit_multiple | gordon | both
+  discount_timing: "mid_year"       # Step-0.5 question 3 — mid_year | end_of_year
+  fx_basis: "spot_at_valuation_date" # Step-0.5 question 4
+
+working_currency: "EUR"
+output_currency: "USD"
+fx_rate:
+  pair: "USD_per_EUR"
+  value: 1.17
+  date_pulled: "YYYY-MM-DD"
+  source: "[Bloomberg / FX vendor / ECB reference]"
+
+wacc:
+  risk_free_rate: 3.07
+  equity_risk_premium: 5.00
+  beta: 1.55
+  cost_of_equity: 10.82
+  pre_tax_cost_of_debt: 5.50
+  after_tax_cost_of_debt: 4.24
+  equity_weight: 0.95
+  debt_weight: 0.05
+  wacc: 10.8
+
+scenarios:
+  base:
+    pt_listing_ccy: 510.50
+    pt_local_ccy: 436.30
+    upside_pct: 20.9
+    fy30_ebitda_local: 6254
+    exit_multiple: 18
+    enterprise_value_local: 84566
+    net_cash_local: 7500
+    equity_value_local: 92066
+    diluted_shares_m: 211
+  bull:
+    pt_listing_ccy: 692
+    upside_pct: 64
+    fy30_ebitda_local: 7200
+    exit_multiple: 22
+  bear:
+    pt_listing_ccy: 279
+    upside_pct: -34
+    fy30_ebitda_local: 3900
+    exit_multiple: 14
+
+skew:
+  formula: "(bull - spot) / (spot - bear)"
+  value: 1.88
+
+tornado_top5:
+  - rank: 1
+    assumption: "Exit EV/EBITDA multiple"
+    flex_unit: "4x"
+    pt_impact: 56
+    pt_impact_pct: 11
+    linked_thesis: 2
+  - rank: 2
+    assumption: "FY28E Consolidated GM"
+    flex_unit: "200bps"
+    pt_impact: 48
+    pt_impact_pct: 9
+    linked_thesis: 2
+  # ...
+```
+
+#### Step 7b — Run xlsx-vs-md consistency audit
+
+Mechanical check before declaring Phase 11 complete:
+
+1. **PT base, bull, bear**: read from xlsx Summary tab or named cells; confirm match to `valuation_outputs.yaml`.
+2. **WACC + components**: read from xlsx WACC tab; confirm match.
+3. **FY[N+5] EBITDA base / bull / bear**: read from xlsx DCF tab; confirm match.
+4. **Exit multiples base / bull / bear**: read from xlsx Sensitivity tab; confirm match.
+5. **Net cash / equity bridge components**: read from xlsx; confirm match.
+6. **Skew calculation**: recompute from yaml scenarios; confirm matches the value stored.
+
+Any mismatch is a fail. Resolve by editing the yaml to match the xlsx (xlsx is source of truth for outputs) OR by editing the xlsx if a typo introduced the divergence.
+
+#### Step 7c — Sweep working/ for orphaned valuation numbers
+
+Phase 11 finalise step also greps the existing working/ files (`pillars.md`, `pillars_audited.md`, `risks.md`, `killing_conditions.md`, `dcf_build.md`, `model_summary.md`) for hard-coded valuation numbers — PT, bull, bear, skew, WACC. Any orphaned value must either:
+- Be replaced with a reference to `valuation_outputs.yaml` (e.g., a comment "base PT $510 per valuation_outputs.yaml" rather than the bare number)
+- OR be updated to match the yaml
+
+This prevents the "skew 1.69 vs 1.88" class of cross-doc drift.
 
 ## Q&A interlude (LIGHT)
 

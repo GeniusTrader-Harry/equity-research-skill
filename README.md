@@ -4,7 +4,7 @@
 [![Built with Claude Code](https://img.shields.io/badge/Built_with-Claude_Code-orange)](https://claude.com/claude-code)
 [![Skills format](https://img.shields.io/badge/Agent_Skills-compatible-blue)](https://agentskills.io)
 
-> **Crack a single stock for an investment view — thesis-first, not research-then-thesis.** A 13-phase Claude Code skill that walks you from raw filings to a defensible 5–8 page investment memo: business understanding → industry → driver decomposition → consensus map → asymmetry hunt → direction commit → pillars → steel-man → audit → model with sensitivity → write-up. Every phase boundary is a checkpoint you control — the skill never auto-advances.
+> **Crack a single stock for an investment view — thesis-first, not research-then-thesis.** A 13-phase Claude Code skill that walks you from raw filings to a defensible 10–18 page investment memo: business understanding → industry → driver decomposition → consensus map → asymmetry hunt → direction commit → pillars → steel-man → audit → model with sensitivity → write-up. Every phase boundary is a checkpoint you control — the skill never auto-advances.
 
 ## Why this exists
 
@@ -47,7 +47,7 @@ After running the workflow end-to-end on one ticker:
 │   └── model_summary.md     (Phase 11 — base + bull/bear envelope + tornado)
 └── deliverables/
     ├── [ticker]_model.xlsx  (3-statement + DCF + sensitivities + tornado)
-    └── [ticker]_memo.md     (5–8 pages; Section 1 is the verbal-pitchable 1-page summary)
+    └── [ticker]_memo.md     (10–18 pages; Section 1 is the verbal-pitchable 1-page summary)
 ```
 
 Section 1 of the memo is itself a recruiting-grade verbal pitch: rating · target · base/bull/bear envelope with risk-reward skew · pillars one-liners · key risks · catalysts · "what would change my mind" teaser.
@@ -68,7 +68,7 @@ flowchart TD
     J --> K[Phase 10<br/>Pillar audit<br/>falsifiable · material · defensible]
     K --> L[Phase 11<br/>One model + sensitivity<br/>+ bull/base/bear envelope]
     L --> M[Phase 12<br/>Iterate on surprises]
-    M --> N[Phase 13<br/>Write 5–8 page memo]
+    M --> N[Phase 13<br/>Write 10–18 page memo]
     style H fill:#ffe4b5,stroke:#333,color:#000
     style K fill:#ffe4b5,stroke:#333,color:#000
     style N fill:#c8e6c9,stroke:#333,color:#000
@@ -147,7 +147,7 @@ These are encoded into the spec because they're the most common failure modes th
 
 ## A note on what this is NOT
 
-- **NOT a replacement for a real sell-side report.** Sell-side initiations are 50–100 pages and serve a different purpose (broad coverage; institutional client coverage). This skill produces 5–8 pages with thesis depth.
+- **NOT a replacement for a real sell-side report.** Sell-side initiations are 50–100 pages and serve a different purpose (broad coverage; institutional client coverage). This skill produces 10–18 pages with thesis depth.
 - **NOT an earnings-update workflow.** For post-print analysis on a name you already cover, use a lighter workflow.
 - **NOT a sector primer.** For sector-level work, use a separate sector-overview skill.
 - **NOT automated investing.** The skill produces a defensible view; the trade is your call. No automated execution, no real-money decisions.

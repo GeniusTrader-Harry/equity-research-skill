@@ -142,6 +142,7 @@ When the skill triggers, the orchestrator does the following in order:
   - None of the above? → omit the number. Write `[not disclosed]` or describe qualitatively. Never write "approximately X" as a workaround for "I don't know X."
 - **No orphan numbers in outputs.** Every numeric claim must have an inline citation `[source]`, `[computed]`, or `[not disclosed]`. Grep-enforceable: `\d+%` or `\d+M` not followed by `[...]` should return zero before saving any output. Run this check as a final step.
 - **My modeling vs. sourced fact must be visually distinct.** When a number is my own modeling extrapolation (not from any source), state explicitly: "my modeling: ~X% based on [methodology]" — never embed it as if it were disclosed or sell-side. The reader needs to know which side of the line each number sits on.
+- **Phase 11 fresh derivation — back-of-envelope numbers from earlier phases never become model inputs without independent primary-source derivation.** Pillar magnitudes asserted in Phases 8/10 (e.g., "+50-150bps GM vs Street," "+€110-330M FY28 GP delta," "approximately 2-7% PT impact") are *qualitative structuring tools*. The model in Phase 11 re-derives every input from primary sources (20-F line items, shareholder-letter actuals, sell-side consensus xlsx) — shares, tax rate, capex, WC, WACC components, multiples. If the rebuilt model disagrees with a pillar magnitude, that's a Phase 12 surprise trigger, not an error to silently align away. Track record across runs: every back-of-envelope chain caught at least one error when surfaced for review. See `references/phase11-model-build.md` Step 0 for the full rule.
 - **Every numeric claim has an inline citation.** Three accepted forms:
   - `[source, p.N]` — verified, number and page checked: e.g., `€17,186M [Q4 25 letter, p.3]`
   - `[source]` — substance verified, exact page not opened: e.g., `~70% royalty share [Wolfe init]`
@@ -174,10 +175,34 @@ When the skill triggers, the orchestrator does the following in order:
 
 ---
 
+## Pre-Phase-13 audit checklist (mandatory before drafting memo)
+
+Before opening Phase 13 to draft the memo, the skill runs a four-check internal-consistency audit across the working/ files. **Do NOT advance to Phase 13 if any check fails** — fix the working files first. The memo is a synthesis layer; if the inputs disagree, no amount of memo iteration will fix it.
+
+| Check | Source | Mechanic |
+|---|---|---|
+| **A. Pillar magnitudes ↔ model output** | `working/pillars_audited.md` vs `working/valuation_outputs.yaml` (or xlsx) | Every pillar's claimed magnitude must reconcile to the model output within tolerance (margin pillars ±50bps; growth pillars ±100bps; volume pillars ±5%) OR the gap must be documented in `working/phase12_iteration.md` |
+| **B. Killing conditions ↔ pillar claims** | `working/killing_conditions.md` vs `working/pillars_audited.md` | Every KC must link to a specific pillar and (where relevant) a specific model assumption. KC base-case calibration check (Phase 10 Gate D) must have passed |
+| **C. Valuation single-source-of-truth** | All working/ files referencing PT / bull / bear / skew / WACC | Every valuation number across all working files must trace back to `working/valuation_outputs.yaml`. Grep working/ for hard-coded values; replace orphans with yaml references or update to match |
+| **D. External anchor traceability** | Every external anchor cited in pillars_audited.md or risks.md | Every cited sell-side estimate, consensus median, regulatory threshold, or peer benchmark must be traceable to the source file with the data point quoted — and the cited forecast horizon must be within the source's actual coverage (per Phase 5 anchor existence matrix; per Phase 10 Gate A) |
+
+Run the audit; report failures explicitly to the user; pause for fixes before Phase 13. If all four pass, advance.
+
+## User preferences layer
+
+Across multiple memos a given user develops settled stylistic preferences that, captured once, should drive the *first* draft of every future memo rather than re-iterating from defaults each time. Examples of preferences worth capturing: bullets-vs-prose balance, "Thesis" vs "Pillar" terminology, methodology placement (body vs appendix), inclusion or omission of optional sections (comps cross-check, sell-side reconciliation, Management subsection, named long-duration-competitive-threat sub-section), preferred header conventions, page-count target.
+
+Capture preferences in either:
+
+- The user's auto-memory: `~/.claude/projects/-Users-[username]/memory/` (persistent across all conversations)
+- A skill-local `preferences.md` if user wants the preferences scoped just to equity research
+
+Reference these at Phase 13 start so the first draft of every future memo matches established conventions. Settled preferences that conflict with the template default should follow the user's preference, not the template.
+
 ## Style notes for outputs
 
 - Plain English over jargon. The user is a student building intuition, not an MD pretending sophistication.
 - Quantify whenever possible. Pillars without numbers are vibes.
 - Cite sources with file path and page/section. E.g., *"FY24 10-K p. 47"* or *"Q3 FY25 transcript, CFO opening remarks."*
 - Prefer markdown tables over prose for comparative data (driver trees, consensus maps, sensitivity outputs).
-- The memo is 5–8 pages (~2,500–4,000 words). Section 1 is itself a 1-page verbal-pitchable summary. If the overall memo spills past 8 pages, tighten.
+- **The memo is 10-18 pages (~5,000-8,000 words) with cover + 2 appendices.** Cover is the verbal-pitchable summary; body sections carry the depth; Appendix A has DCF mechanics, Appendix B has key model assumptions. If the overall memo spills past 18 pages, tighten — but the previous 5-8 page target was too tight for an interview-grade memo with a DCF appendix.
