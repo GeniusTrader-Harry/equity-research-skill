@@ -401,6 +401,31 @@ Drill-down on the most important forward assumptions. Content varies by thesis t
 *Working archive in `working/`. Live model: `deliverables/[ticker]_model.xlsx`.*
 ```
 
+### Appendix C — Update history (mandatory scaffold)
+
+Every memo carries `## Appendix C — Update history` as the final appendix. At initiation, the table has only the first row (the initiation). All subsequent updates — produced by the `equity-research-update` companion skill — append rows chronologically.
+
+```markdown
+# Appendix C — Update history
+
+| Date | Event | Decision | Key change |
+|---|---|---|---|
+| [YYYY-MM-DD initiation date] | Initiation | [DIRECTION], PT $[XXX] | — |
+```
+
+**Class values for the "Decision" column** (all subsequent rows):
+- `No change` — Class 1 log-only update (no body edits)
+- `Refined` — Class 2 in-place refinement (thesis text or model lightly touched; PT may have moved <5%)
+- `Heavy refinement` — Class 3 (pillar restated or KC fired but direction retained)
+- `LONG → [direction]` / `Closed` — Class 4 direction reversal
+
+**Key change column rules:**
+- ≤30 words
+- MUST mention any pillar invalidated, any KC fired, any PT change with old → new
+- For the initiation row: `—`
+
+The memo's git log carries the full diff; this appendix is the human-readable audit trail visible inside the PDF itself.
+
 ---
 
 ## PASS NOTE FORMAT

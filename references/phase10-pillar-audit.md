@@ -267,21 +267,52 @@ Direction: [LONG / SHORT]
 [repeat for each pillar]
 ```
 
-### `working/killing_conditions.md`
+### `working/killing_conditions.md` — structured format
 
-A flat list of all killing conditions across all surviving pillars. This is what appears in the Phase 13 pitch under "What would change my mind" — used verbatim, no paraphrasing.
+Every KC carries a **stable ID** (KC1, KC2, KC3, …), an explicit verbatim **trigger**, the **pillar it kills** (with joint dependencies if any), the **monitoring cadence**, and the **source to check** during monitoring. The ID stays stable across this file, Phase 13's "What would change my mind" section, and the `equity-research-update` companion skill's three-test.
+
+The structured format is mandatory — it's what the companion update skill reads to run Test B (KC test) mechanically. Free-prose KCs from older runs need to be re-formatted before any update event.
 
 ```markdown
 # [TICKER] Killing Conditions (What Would Change My Mind)
 
-## For Pillar 1 — [title]
-- [condition 1]
-- [condition 2]
-- [condition 3]
+Pillar references (from `pillars_audited.md`):
+- **P1**: [pillar 1 short title]
+- **P2**: [pillar 2 short title]
+- **P3**: [pillar 3 short title]
 
-## For Pillar 2 — [title]
-- ...
+---
+
+## KC1 — [short label] (Pillar P[N])
+
+- **Trigger**: [verbatim condition with a specific number or event — must be checkable from a public source]
+- **What it kills**: P[N] [pillar title]; JOINT P[M] if applicable (and how)
+- **Cadence**: every earnings · monthly · when [specific event happens] · continuous
+- **Source for monitoring**: [where the data point lands — e.g. earnings release headline metric / transcript Q&A search / specific 10-K item / regulatory docket]
+- **Why this falsifies the pillar**: [≤30 words tying the trigger back to the pillar's mechanism]
+
+## KC2 — [short label] (Pillar P[N])
+
+- **Trigger**: …
+- **What it kills**: …
+- **Cadence**: …
+- **Source for monitoring**: …
+- **Why this falsifies the pillar**: …
+
+## KC3 — [short label] (Pillar P[N])
+
+…
 ```
+
+**ID stability rules:**
+- KC IDs (KC1, KC2, …) are assigned at Phase 10 finalisation and never renumbered. If a KC is dropped during a later HEAVY refinement, its ID is retired (don't reuse it); subsequent KCs continue from the highest used ID + 1.
+- Pillar IDs (P1, P2, P3) match `pillars_audited.md` exactly. If a pillar is dropped, its ID retires too.
+
+**Format-validation checklist** (before declaring Phase 10 finalised):
+- Every KC has all five bullet fields (Trigger / What it kills / Cadence / Source / Why)
+- Trigger is testable from a public source (no "if mgmt seems concerned")
+- Pillar reference in heading matches an actual pillar from `pillars_audited.md`
+- Cadence is specific (not just "ongoing")
 
 ## Q&A interlude (HEAVY)
 
