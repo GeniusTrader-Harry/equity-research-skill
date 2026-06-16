@@ -93,8 +93,8 @@ The view is always yours. The skill surfaces evidence, drafts, computes, and fla
 ## Install
 
 ```bash
-git clone https://github.com/GeniusTrader-Harry/equity-research.git \
-  ~/.claude/skills/equity-research
+git clone https://github.com/GeniusTrader-Harry/equity-research-skill.git \
+  ~/.claude/skills/equity-research-customised-process
 ```
 
 In Claude Code, the skill auto-loads when it detects relevant phrasing. Trigger phrases:
