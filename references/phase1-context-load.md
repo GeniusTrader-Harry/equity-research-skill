@@ -2,7 +2,21 @@
 
 **Goal**: Fetch all source documents to disk, populate the per-ticker research directory, and produce a working context file for downstream phases. User must end this phase with a navigable archive of source documents AND a `working/context.md` summary.
 
-**Execution principle**: do ALL programmatic work first; the user-blocking sell-side fetch prompt is the **last** step. This way the user can drop notes in any time before Phase 5 (when consensus map is built) without stalling Phases 2–4.
+**Execution principle**: do ALL programmatic work first; the user-blocking CapIQ-data fetch prompt is the **last** step. This way the user can drop exports in any time before Phase 5 (when consensus map is built) without stalling Phases 2–4.
+
+**Contents**: Source hierarchy (which source for which data type) · Step 0 capabilities + source mode · Step 1 directory setup · Step 2 issuer type + SEC filings (FPI handling, 6-K exhibits) · Step 3 earnings-call transcripts · Step 4 IR materials + AR language diff · Step 5 market data · Step 6 source_index.md · Step 7 context.md · Step 8 manual CapIQ fetch (GATING — mode choice asked here) · Step 8b completion-verification gate · Step 9 Street-view fallback layer · Step 10 Q&A interlude · Failure modes
+
+> **Two source modes — set `research_notes_available` first (Step 0).** This skill runs in one of two modes, and the gating below depends on which:
+> - **`research_notes_available: false` (starting assumption — confirmed with the user at the Step 8 gate, never silently assumed)** — the user can pull **CapIQ consensus *data*** (xlsx exports: estimates, revisions, comps multiples, own-multiple history, aggregate PT) but **not written research-note PDFs**. The note-derived qualitative layer (driver-level estimates, Street framing, per-bank PT bridges, industry primers) comes from the **earnings-call analyst Q&A + management guidance + free public sources** instead (Step 9).
+> - **`research_notes_available: true`** — the user also has the written note PDFs; run the full notes-driven path below.
+>
+> **GATING RULE — the manual CapIQ-data fetch is part of Phase 1, not an optional add-on.** The Step 8 manual-fetch request is a genuine decision point that gates Phase 1 completion **in both modes** (the CapIQ *data* exports are always requested). After the programmatic work is done, the skill must:
+> 1. Issue the Step 8 request as its **own dedicated message**, then **STOP and wait** for the user to explicitly answer `done` / `skip` / `defer`.
+> 2. **NEVER** bundle the ask underneath, or after, a "Phase 1 complete — ready for Phase 2?" summary. Do not declare Phase 1 complete, do not produce the Step 10 interlude, and do not offer to advance to Phase 2 until the user has explicitly chosen one of `done` / `skip` / `defer`.
+> 3. Treat the **default path as "the user is gathering the exports."** `defer` and `skip` are explicit user choices, not the skill's assumption. If the user is silent, wait — do not advance.
+> 4. **Under `research_notes_available: false`, request only the CapIQ *data exports*** — drop the written-notes portion of the Step 8 prompt entirely (don't ask for initiations / update notes / industry primers; those are replaced by the Step 9 free layer).
+>
+> The failure mode this prevents: producing a polished Phase-1-complete output that treats sourcing the consensus data as a footnote, nudging the user toward Phase 2 before the exports are in. Gathering the CapIQ data is essential Phase 1 work — ask for it first, wait for it, then close the phase.
 
 ---
 
@@ -23,19 +37,22 @@ Every subsequent phase uses this hierarchy. If two sources disagree, the **desig
 | **Past-quarter actual vs. pre-print consensus** (beat/miss comparison) | **CapIQ Consensus xlsx** (both Actual and Median rows from one file) | The xlsx has both columns in one place; pulling actual from one source and consensus from another creates noise. Use CapIQ's own Actuals row. |
 | **Next-quarter guide vs. Street consensus** | **Web search** (Reuters, FT, Bloomberg, Investing.com) | Press captures the Mean used in headline reactions; CapIQ Median can differ from the press consensus, sometimes meaningfully. |
 | **Forward FY+1/2/3 consensus** | **CapIQ Consensus xlsx Median row** | Forward Median is the cleanest. Mean is more sensitive to outliers. |
-| **Estimate revisions trend** (analyst upgrades / cuts) | **CapIQ Revisions xlsx** + sell-side notes | Both required for proper context. |
+| **Estimate revisions trend** (analyst upgrades / cuts) | **CapIQ Revisions xlsx** (+ sell-side notes *if `research_notes_available`*) | CapIQ xlsx carries the revision counts; notes add color when available. |
 | **Trading multiples (NTM P/E, EV/EBITDA, EV/Sales)** | **CapIQ Multiples xlsx** | History going back N years; cross-check vs. peer set. |
 | **Forward strategic direction, mgmt tone** | **Earnings call transcript** + investor day deck | Qualitative only — never use for numerical claims. |
-| **Sell-side rating distribution, analyst PTs** | **Sell-side note headlines** | CapIQ Consensus xlsx aggregates but doesn't disclose individual targets. |
-| **Industry sizing (TAM, growth rate, share)** | **Industry primer notes** (sell-side) + third-party (IFPI, IDC, Gartner) | Mgmt's own TAM is usually inflated; cross-check. |
+| **Street framing / reasoning** (what analysts probe, where they're split) | **Earnings-call analyst Q&A** + financial press (Reuters/FT/WSJ/Bloomberg) — *or* sell-side notes *if `research_notes_available`* | The analysts who write notes ask their questions live on the call; the Q&A is the free, primary read on Street concerns. |
+| **Aggregate rating distribution + PT distribution** | **CapIQ Consensus xlsx** (mean/median/high/low PT, # analysts) | CapIQ aggregates the PT distribution; per-bank individual targets need the notes (only if `research_notes_available`). |
+| **Industry sizing (TAM, growth rate, share)** | Third-party (IFPI, IDC, Gartner, OECD) + filings Item 1/4 + sector Substacks (+ industry primer note *if `research_notes_available`*) | Mgmt's own TAM is usually inflated; cross-check. Free public sources carry this without notes. |
 | **Real-time price, market cap, 52-wk range, YTD performance** | **Yahoo Finance v8 endpoint** | Free + reliable for OHLC. |
 | **Language drift in risk factors year-over-year** | **10-K / 20-F diff** (FYn vs. FYn-1) | Captures shifts in mgmt's articulated risk framing — often the cleanest signal of what mgmt is now worrying about. |
 
 **Critical anti-error rule**: **Always re-pull headline anchor numbers (rev, OI, NI, subs, MAU) from the latest shareholder letter at the start of any phase that uses them.** If the most recent fiscal year just closed (e.g., FY25 results just released), the FY24 numbers you saw last week are now one year stale — and using them as if they were FY25 will corrupt every downstream growth-rate computation. Year-shift is the most common silent data error in this workflow.
 
-## Step 0 — Detect available capabilities
+## Step 0 — Detect available capabilities + set the source mode
 
-At Phase 1 start, check whether the optional browser-automation MCP is connected (greatly improves anti-bot IR-site access):
+At Phase 1 start, establish two things and record both in `working/context.md`:
+
+**(a) Browser-automation MCP** (greatly improves anti-bot IR-site access):
 
 ```python
 # Pseudocode — uses mcp__Claude_in_Chrome__list_connected_browsers if available
@@ -43,7 +60,16 @@ browsers = mcp.list_connected_browsers()
 chrome_mcp_available = len(browsers) > 0
 ```
 
-Record the capability in `working/context.md`. If unavailable, the workflow still functions — IR site PDFs sometimes have direct CDN URLs that bypass anti-bot, and the user can always manually fetch and drop into `ir-materials/`.
+If unavailable, the workflow still functions — IR site PDFs sometimes have direct CDN URLs that bypass anti-bot, and the user can always manually fetch and drop into `ir-materials/`.
+
+**(b) `research_notes_available`** — whether the user can supply written sell-side research-note PDFs this run:
+
+- **Default `false`** — the user has **CapIQ consensus *data*** (xlsx exports) but **not the written note PDFs**. Use the call-Q&A / free-source substitutes for the note-derived qualitative layer (see the source-hierarchy table and Step 9).
+- Set **`true`** only if the user confirms they have note PDFs, OR if PDFs are already present in `sell-side/`.
+
+**`false` is the starting assumption, NOT a silent decision — the skill must surface the mode choice to the user and let them set it.** Note access varies run-to-run (depends on whether the user has library/terminal access that day), so the skill never assumes it knows. At the Step 8 gate, explicitly offer both modes: Mode A (CapIQ data only; skill rebuilds the Street narrative from call-Q&A + free sources) vs. Mode B (user also drops written note PDFs for per-bank PT bridges, individual analyst framing, deep-dive frameworks). The user's answer sets the flag. Only fall through to `false` without asking if the user has *already* declined notes earlier in the same session.
+
+Record `research_notes_available: true|false` in `working/context.md`. Every downstream phase (5, 6, 10, 11) reads it. **CapIQ-data sourcing is unconditional in both modes** — only the *written-note* dependencies switch.
 
 ## Step 1 — Set up directory structure
 
@@ -233,6 +259,7 @@ The `meta` object carries `regularMarketPrice`, `currency`, `fiftyTwoWeekHigh`, 
 ### Data to capture
 
 - Current price, market cap, shares outstanding
+- **Recent close trajectory — last ~5–10 trading sessions** (not just the point snapshot). A single latest-close number hides a sharp recent move; pulling the trailing sessions surfaces whether the stock has just run up or sold off hard in the past week or two. Record the series in `working/market_data.md`.
 - 52-week range, YTD performance, 1Y / 3Y / 5Y returns, position in 52w range
 - Forward P/E, EV/EBITDA, P/Sales (consensus-based, may need Phase 5 data to fill)
 - Street consensus revenue and EPS for next 3 fiscal years (from sell-side if available; from Yahoo/Substack if not)
@@ -244,6 +271,44 @@ Save to `working/market_data.md`.
 ### Setup flag
 
 If the stock is in significant drawdown (e.g., >25% off 52w high) or near 52w high after a big run, **flag this in `context.md`** as a setup signal that will shape the Phase 7 direction commit.
+
+## Step 5b — Material events & overhangs scan (MANDATORY)
+
+**Why this step exists**: the 10-K/20-F risk factors are generic and stale; they will not tell you that the company is under an active antitrust investigation, has just been sued, or was hit by a short report last month. Those *live* events are usually the single biggest thing the market is pricing — and the thing a thesis must take a view on. Without an explicit step to go find them, they get missed (a Phase-1-"complete" archive that omits the live overhang corrupts every downstream phase). The price action from Step 5 is the prompt: **if the stock just moved hard, find out why.**
+
+**What to do**: before closing Phase 1, identify the **top 1–3 things currently driving or overhanging the stock**, using targeted web research + the most recent 8-K / 6-K filings + recent press. Scan explicitly for this trigger list:
+
+- Regulatory / antitrust **investigations**, probes, or enforcement actions
+- **Litigation / class actions** (securities, antitrust, IP, product)
+- **Short-seller reports** / activist short campaigns
+- **Accounting / restatement / auditor** concerns, going-concern, material weakness
+- Major **M&A** (pending deal, large divestiture, failed deal)
+- **Management turmoil** — CEO/CFO departure, board upheaval, founder exit
+- **Activist** investor stakes / proxy fights
+- **Guidance cuts** / pre-announcements / negative pre-releases
+- **Geopolitical** — sanctions, tariffs, export controls, **delisting (HFCAA)**, forced divestiture
+- Product **recalls / safety / outages / breaches**
+- Any **unusual price move** in the last 1–3 months without an obvious earnings cause
+
+**Web-research discipline** (per the user's global rules): probe with a single search before sweeping; prefer primary/wire sources (company newsroom, PR Newswire/Business Wire, regulator announcements, court dockets) over recap articles; use Chrome MCP as the fallback for anti-bot/paywalled sources.
+
+**Output**: record findings under a new **"## Material events & overhangs"** heading in `working/context.md` — for each item: one-line description, date, current status (resolved / ongoing / pending), and a flag for "research to depth in Phase 2 §4." Note which items are catalysts inside the research window. These are **not** fully researched here — Phase 2 §4 does the deep dive (and writes it up as a **dedicated section of the Phase 2 company brief**, not a separate note — Phase 2 is one file). This step's job is to make sure nothing material is *missed*.
+
+## Step 5c — Key debate / crux scan (MANDATORY)
+
+**Why this step exists**: the single most important business question on a name is frequently the one the company does **NOT** cleanly disclose. Reported segments hide it — **Temu** sits inside PDD's "transaction services," **AWS** spent years buried in Amazon "Other," **Reality Labs**' burn, **TCOM's international margin** inside a single reportable segment. If you let the 10-K/20-F's *reported structure* define what's important, you will describe the business accurately and **miss the thesis every time**. The crux is defined by the **market**, not the filing — so derive it from market signals, mechanically, so it can't be forgotten.
+
+**What to do — identify the 1–3 "key debates"** (the questions a sharp PM asks first, the bull-vs-bear cruxes) using these **mechanical detectors. Tabulate; do not rely on memory or intuition:**
+
+1. **Analyst-question tally (the primary detector).** From the last 1–2 earnings-call Q&As (gathered in Step 3), list **every** analyst's question topic. **The most-recurring topics ARE the key debates** — the buy/sell-side has already done the work of identifying what matters, and it is recorded verbatim in the transcript. (If 5 of 12 questions are about international margin / Temu / AWS, that is the crux.) *This is a core reason the call transcripts are mandatory in Mode A.*
+2. **The "what's NOT broken out?" check.** Is there a fast-growing, high-burn, or controversial **sub-business the reported segments don't cleanly separate**? Name it explicitly. The undisclosed high-stakes business is the classic buried crux (Temu/PDD, AWS/Amazon-historically, international-margin/TCOM, a loss-making D2C line, a hidden-gem segment, a "stub" worth more than the core).
+3. **Price / valuation signal.** Why is the stock where it is? What explains a large recent move or an unusual multiple? The answer names a debate.
+4. **Management emphasis.** What do the CEO/CFO spend prepared remarks on *beyond* the headline numbers? What are their stated strategic priorities?
+5. **The bull/bear one-liner.** Write the bull's one-sentence thesis and the bear's. **The thing they disagree about is the crux.**
+
+**Output**: record the 1–3 key debates under a **"## Key debates / crux"** heading in `working/context.md`. For each: the question in one line; which detector flagged it; whether it is a **structural driver** (→ deep-dived/quantified in **Phase 4**) or an **event/overhang** (→ Step 5b / Phase 2); and the **disclosure gap** (what the company won't tell you that you'll have to reconstruct). These threads are carried through **Phase 2 (surface & describe) → Phase 4 (quantify the structural ones) → Phase 6 (adjudicate the bull/bear)**.
+
+**This is the recall mechanism.** By tabulating the analyst questions and naming what's not broken out, the crux surfaces *mechanically* — you cannot "forget" to flag the international / Temu / AWS question, because the market has already flagged it and you are required to count.
 
 ## Step 6 — Produce `working/source_index.md`
 
@@ -267,8 +332,8 @@ Date fetched: [YYYY-MM-DD]
 ## IR materials (ir-materials/)
 [same]
 
-## Sell-side notes (sell-side/)
-PENDING USER MANUAL FETCH — see Phase 1 Step 8.
+## CapIQ data exports + notes (sell-side/)
+PENDING USER MANUAL FETCH — see Phase 1 Step 8. (Under `research_notes_available: false`, this is data exports only; written notes replaced by `working/street_view.md`.)
 
 ## Market data
 working/market_data.md populated [date] from [source].
@@ -287,16 +352,25 @@ Issuer type: [US domestic / Foreign private issuer ({country})]
 Reporting currency: [USD / EUR / etc.]
 Model currency (per Phase 11): [USD / EUR / etc.]
 Chrome MCP available: [yes/no]
+research_notes_available: [true / false]   # false = CapIQ data only, no written note PDFs
+Street view source: [notes-driven / call-Q&A + aggregator (no written notes)]
 
 ## Source documents
 - Filings: [list with paths and filing dates]
 - Transcripts: [list]
 - Shareholder letters (FPI only): [list]
 - IR materials: [list, including any gaps from IR site blocks]
-- Sell-side notes: PENDING MANUAL FETCH (see Step 8) or "free aggregators only"
+- CapIQ data exports: PENDING MANUAL FETCH (see Step 8)
+- Sell-side notes: [list if research_notes_available, else "n/a — replaced by working/street_view.md"]
 
 ## Market snapshot
 [from Step 5 — include drawdown/run flag]
+
+## Material events & overhangs
+[from Step 5b — the top 1–3 live events driving/overhanging the stock. For each: one-line description, date, status (resolved/ongoing/pending), "research to depth in Phase 2 §4" flag, and whether it's a catalyst inside the research window. If genuinely nothing material is live, write "none identified" — do not leave this blank.]
+
+## Key debates / crux
+[from Step 5c — the 1–3 questions the market is actually focused on (from the analyst-question tally + "what's not broken out" check + price/multiple + bull/bear one-liner). For each: the debate in one line; the detector that flagged it; STRUCTURAL DRIVER (→ Phase 4 quantify) or EVENT (→ Step 5b); and the disclosure gap to reconstruct. This is the thread that prevents the thesis-critical sub-business (the Temu/AWS/international-margin question) from being silently omitted downstream. Never leave blank — if the only debate is an event already in "Material events," say so.]
 
 ## Annual report language drift highlights
 [3–5 most material changes from the language diff]
@@ -307,21 +381,28 @@ Chrome MCP available: [yes/no]
 - [e.g., "Stock off 46% from 52w high — major setup signal for Phase 7"]
 ```
 
-`context.md` will be updated again after Step 8 to record sell-side notes.
+`context.md` will be updated again after Step 8 to record the CapIQ data exports (and notes, if `research_notes_available`).
 
-## Step 8 — Sell-side notes (user-fetch workflow)
+## Step 8 — Manual CapIQ fetch (user-fetch workflow)
 
 **This is now the last step before the Q&A interlude.** All programmatic work is done; the user-blocking pause is at the end so it doesn't stall earlier work.
 
+**Issue this as its own message and STOP.** Per the gating rule at the top of this file: do not pair the prompt below with a Phase-1-complete summary or a "ready for Phase 2?" offer. Send the request, then wait for an explicit `done` / `skip` / `defer`. Only after the user answers do you run Step 10 (interlude) and offer to advance. If the user is silent, keep waiting — manual fetch waits forever.
+
+**Mode-dependent scope:**
+- **Mode not yet set (the normal Step 8 case)** — the Step 8 prompt **must surface the mode choice**, not pre-decide it. Always request the CapIQ **data exports** (required in both modes), AND in the same message present supplying **written sell-side notes** as an *option*: a short "if you also have research-note PDFs this run, drop them in and I'll switch to Mode B; here's what to grab" block (the Research-notes table + which banks lead coverage for this sector). The user's reply sets `research_notes_available`. Do **not** silently omit the notes offer — that strands the user in `false` without ever being asked.
+- **`research_notes_available: false` confirmed** (user has already said they have no notes this run) — request **only the CapIQ data exports**; the note content is replaced by the Step 9 free layer (earnings-call Q&A + press + free industry sources).
+- **`research_notes_available: true` confirmed** (user has notes, or PDFs already in `sell-side/`) — request both the research notes AND the data exports (full prompt below).
+
 **Critical**: do NOT attempt programmatic access to CapIQ, Bloomberg, FactSet, or other paywalled research platforms — even via Chrome MCP. Their TOS explicitly prohibits automated/scripted access, and the user risks losing their subscription (and possibly their institutional access). Chrome MCP can technically drive these sites, but doing so crosses the TOS line. Use Chrome MCP for public/personal-sub sources only (FT, WSJ, Substack, IR sites). Manual fetch is the right pattern for institutional research platforms.
 
-Instead, prompt the user with this exact workflow:
+Prompt the user with this workflow. **Present the data exports as required and the Research-notes block as an offer** (so the user can opt into Mode B), unless the user has *already* declined notes this session — in which case drop the Research-notes block and request data exports only. Frame the notes block as: *"If you also have written sell-side note access this run, drop these in too and I'll use them; otherwise reply with just the data and I'll rebuild the Street view from the call Q&A + free sources."*
 
 > "Programmatic Phase 1 work is complete. Source archive at `~/Claude Projects/Equity Research/[TICKER]/`.
 >
 > One remaining manual step: please log into CapIQ (or Bloomberg / FactSet / your university or workplace library equivalents) and download the following into `~/Claude Projects/Equity Research/[TICKER]/sell-side/`. Save research as PDFs and data screens as PDF/PNG exports.
 >
-> **Research notes**:
+> **Research notes** *(only if you have research-note access this run)*:
 >
 > | Item | Time window | Notes |
 > |---|---|---|
@@ -331,7 +412,7 @@ Instead, prompt the user with this exact workflow:
 >
 > Sector-specific bank coverage priorities — see table below.
 >
-> **Data exports — be explicit about time periods, metrics, and currency**:
+> **Data exports — be explicit about time periods, metrics, and currency** *(always — these are the consensus data, available even without research-note access)*:
 >
 > | Item | Time window | Metrics | Currency | Where in CapIQ |
 > |---|---|---|---|---|
@@ -356,6 +437,10 @@ CapIQ's "Initiation of Coverage" filter is unreliable — many post-event recaps
 | Content | Full thesis, framework, business deep-dive, model | Single event commentary |
 
 Filter by page count (>30) to surface the real ones.
+
+### Picking between two notes from the same analyst around a print
+
+When an analyst publishes twice around an earnings event — a same-day "first look" / "reporting results" reaction AND a 1–2-day-later "estimates" / "model update" follow-up — **prefer the estimates follow-up**. The same-day note mostly re-narrates the quarter (actuals, charges, call color), which you already hold from primary filings; the follow-up carries the analyst's *revised forward estimates and target*, which is the part that's additive to the consensus map. Grab the same-day note only as a free extra if you want to see how the view evolved over 48 hours.
 
 ### Sector-specific bank coverage priorities
 
@@ -383,30 +468,66 @@ Bloomberg's consensus tab shows which analysts are most active per name — defe
 
 When user says "done":
 - List files in `sell-side/`, update `context.md` and `source_index.md`
-- Reply: *"Found N notes: [filenames with bank + type + date]."*
+- Run `scripts/parse_capiq_exports.py` on `sell-side/` → `working/capiq_summary.md` (consensus medians, PT distribution, ratings, revisions, multiples). For files the script doesn't recognize, parse ad-hoc — figures are always extracted either way.
+- Reply: *"Found: [filenames — data exports, and notes if any, with type + date]."*
+- If note PDFs are present, set `research_notes_available: true` and run the notes-driven path downstream.
 
 When user says "skip":
-- Fall back to free aggregators (Step 9) and note the limitation in `context.md`.
+- Note the limitation in `context.md`. Always run Step 9 (the note-derived qualitative layer is needed regardless), and — if even the CapIQ data exports were skipped — fall back to free aggregators (StockAnalysis.com / Yahoo) for the headline consensus too.
 
 When user says "defer":
-- Proceed to Phase 2. Re-prompt at start of Phase 5 (or earlier if user supplies notes).
+- Proceed to Phase 2. Re-prompt at start of Phase 5 (or earlier if user supplies exports).
 
-## Step 9 — Free aggregator fallback (only if user skipped sell-side)
+## Step 8b — Completion gate (before declaring Phase 1 complete)
 
-Gather free Street view from:
-- **Seeking Alpha** — analyst price target distribution, ratings, summary blurbs (page is anti-bot; use Chrome MCP if connected)
-- **Yahoo Finance** — aggregated price targets, rating distribution, recent revisions
-- **StreetAccount** (free tier) — recent headlines and brief summaries
-- **Substack analysts** for the relevant sector:
-  - Semis: Doug O'Laughlin (Fabricated Knowledge)
-  - Tech / value: Modest Proposal
-  - Financials: Net Interest
-  - Generalist: Fundamental Edge
-- **Twitter/X $-tags** — directional sentiment, particularly for short-term setups
+"Phase 1 complete" is a claim about **two** things: the **archive is complete** AND its **audit trail is honest**. Verify BOTH before running Step 10 (Q&A interlude) or telling the user Phase 1 is complete. A gate that checks only the second is how an **empty `ir-materials/` and a zero-transcript `transcripts/` slip through** while the index "honestly" logs them PENDING — which corrupts every downstream phase, and in Mode A hollows out the entire Street-view layer.
 
-Save raw aggregator content as `sell-side/aggregator_summary.md`. Flag in `context.md` that "Street view based on aggregated sources only; full notes unavailable."
+### Part A — Completeness (the archive itself)
+
+List the actual contents of every source subdirectory (`filings/`, `transcripts/`, `ir-materials/`, `sell-side/`), then verify each required artifact below is **PRESENT** or **JUSTIFIED-ABSENT**. **"PENDING", "fetch later if needed", and "not attempted" are NOT passing states** — each must resolve to one of:
+- **PRESENT** — file is on disk and logged in `source_index.md`.
+- **JUSTIFIED-ABSENT** — you *attempted* the fetch (exhausting the source ladder in the relevant step) and *confirmed* it genuinely does not exist, with the attempted sources named in `context.md`. **"Didn't try" ≠ "doesn't exist."**
+
+| Required artifact | Source step | Bar before it may be called "absent" |
+|---|---|---|
+| ≥2 years annual filings (10-K / 20-F) | Step 2 | pull 3+ yrs if Phase 11 may need a 5-yr P&L |
+| **Last 4 earnings call transcripts** | Step 3 | Motley Fool → IR → AlphaStreet → Investing.com ladder exhausted |
+| Last 4–5 quarterly 6-Ks / shareholder letters | Step 2 | EDGAR has them — absence is almost never justified |
+| IR decks (shareholder / earnings / investor-day) | Step 4 | Chrome MCP → CDN → 6-K-exhibit → manual ladder exhausted (some issuers, e.g. many China ADRs, genuinely publish none — that *is* a valid justified-absent, recorded as such) |
+| Market data (`working/market_data.md`) | Step 5 | — |
+| Material-events & overhangs scan | Step 5b | must be done, not blank |
+| CapIQ data exports | Step 8 | PRESENT, or the user's explicit `defer` (the one sanctioned deferral — re-prompt at Phase 5) |
+
+**Mode-A promotion (`research_notes_available: false`): the last 4 earnings-call transcripts are MANDATORY and NON-DEFERRABLE.** Under Mode A they are the substitute for the missing written sell-side notes (Step 9) — the single most important qualitative source on the name. They may be marked absent only if genuinely unavailable after exhausting the Step-3 ladder, and that absence is then a **flagged material limitation in `context.md`**, never a quiet PENDING.
+
+### Part B — Consistency (the audit trail)
+
+`source_index.md` and `context.md` are first written in Steps 6–7, **before** the CapIQ exports arrive — so they go stale when documents land later. Confirm both now reflect the real inventory from Part A: every export and note logged, no leftover "PENDING" placeholder for a folder that now has files, and `research_notes_available` + the Street-view granularity flag recorded. If either file is stale, **update it first**.
+
+An index that disagrees with the folder — **or a folder missing a required artifact that isn't justified-absent** — is not "Phase 1 complete." Do not declare completion or advance to the Q&A interlude until both parts pass.
+
+## Step 9 — The note-derived qualitative layer (DEFAULT under `research_notes_available: false`)
+
+This step is **not a degraded fallback** — under the default mode it is the *primary* source for everything the written notes used to provide (Street framing/reasoning, the qualitative read on dispersion, individual analyst sentiment). The CapIQ data exports (Step 8) still carry all the numbers; this step carries the narrative the PDFs would have. Run it whenever `research_notes_available: false` (and as an additive enrichment even when notes ARE available).
+
+Gather, in priority order:
+
+1. **Earnings-call analyst Q&A — the highest-value, free substitute for a sell-side note.** The analysts who write the notes ask their questions live on the call. The Q&A section reveals, verbatim: what they're worried about, where they're skeptical of guidance, which drivers they think are the swing factors, and where the Street is split. Re-read the **last 1–2 call transcripts' Q&A** specifically through that lens and capture the recurring themes (already in `transcripts/`). This is the single best read on "the modal Street view."
+2. **Financial press** — Reuters / FT / WSJ / Bloomberg coverage of the name (guide-vs-Street reactions, analyst-reaction roundups). Press captures the consensus *mean* used in headlines.
+3. **Seeking Alpha** — analyst price-target distribution, ratings, summary blurbs (page is anti-bot; use Chrome MCP if connected).
+4. **StockAnalysis.com / Yahoo Finance** — aggregated price targets, rating distribution, recent revisions (backup for the CapIQ aggregate PT if the data export was also skipped).
+5. **Substack analysts** for the relevant sector:
+   - Semis: Doug O'Laughlin (Fabricated Knowledge)
+   - Tech / value: Modest Proposal
+   - Financials: Net Interest
+   - Generalist: Fundamental Edge
+6. **Twitter/X $-tags** — directional sentiment, particularly for short-term setups.
+
+Save the captured content as `working/street_view.md` (call-Q&A themes + press + aggregator PT distribution). Flag in `context.md` whether the Street view is "notes-driven" or "call-Q&A + aggregator (no written notes)" so downstream phases know the granularity.
 
 ## Step 10 — Q&A interlude
+
+**Precondition: only reach this step after the user has explicitly answered the Step 8 manual-fetch prompt (`done` / `skip` / `defer`).** Do not present this interlude — or any "advance to Phase 2" offer — while the CapIQ-data fetch decision is still open.
 
 Pause with:
 

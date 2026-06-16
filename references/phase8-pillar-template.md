@@ -4,6 +4,8 @@
 
 **Output**: `working/pillars.md` with 2–4 surviving pillars.
 
+Citation discipline applies to every numeric claim in this phase's output: `[source, p.N]` / `[source]` / `[est, not disclosed]`, validated by `scripts/validate_citations.py` before saving — see SKILL.md "Important behaviors".
+
 ## What a pillar is
 
 A pillar is one **specific, testable argument** supporting the direction. Every pillar must have **all 5 elements**:
@@ -15,6 +17,10 @@ A pillar is one **specific, testable argument** supporting the direction. Every 
 | **Mechanism** | The causal story — *why* this happens |
 | **Magnitude** | The financial impact, quantified, in the right unit |
 | **Timeframe** | When this plays out (specific year or window) |
+
+**Magnitudes drafted here are qualitative structuring tools, not model inputs.** Phase 11 re-derives every model input independently from primary sources (see SKILL.md "Phase 11 fresh derivation"); if the rebuilt model disagrees with a pillar magnitude, that's a Phase 12 surprise trigger — never an error to silently align away.
+
+**Materiality flag at draft time (flag only — never auto-reject).** When drafting each candidate, compare its claimed magnitude against the Phase 10 materiality reference levels (margin <~50bps, growth <~100bps, volume <~5%, or <10% PT impact). If it looks small, flag it to the user with the comparison — "this pillar claims +20bps; the Phase 10 audit treats <50bps as immaterial — keep, fold into another pillar, or drop?" — and let the user decide. The numbers inform the judgment; they never make it. (Why here: a too-small pillar otherwise surfaces only at Phase 10, after it's been drafted, iterated, and steel-manned — e.g., SPOT's biddable-ads idea was folded into Pillar 2 late and ad-hoc.)
 
 ## The template
 

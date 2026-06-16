@@ -2,6 +2,7 @@
 
 **Goal**: Run each finalized pillar through 3 quality checks. Skill drafts candidate killing conditions; user verifies. Skill computes materiality mechanically. Skill counts evidence sources. Output is the surviving pillar set + the killing conditions list (used in Phase 13 pitch and post-publication monitoring).
 
+**Input**: `working/pillars.md` (Phase 8 output — the finalized pillar set this phase audits).
 **Output**: `working/pillars_audited.md` and `working/killing_conditions.md`
 
 ## The 3 checks
@@ -67,7 +68,7 @@ Materiality has two distinct questions. A pillar can be material under one and n
 
 **Mechanic**:
 1. Take the pillar's magnitude **vs Street** (the differential, not the absolute level)
-2. Flow through model: GP delta → OI delta (apply flow-through %) → NI (after tax) → EPS (÷ shares) → price/share (× multiple) → convert FX if needed
+2. Flow through model: GP delta → OI delta (apply flow-through %) → NI (after tax) → EPS (÷ shares) → price/share (× multiple) → convert FX if needed. The multiple used here should be the **same forward multiple chosen in Phase 11's Step 0 method gate** (the triangulated EV/EBITDA or P/E), so the materiality test and the final valuation stay consistent.
 3. **Divide by spot price** to get % impact
 
 **Threshold**: ≥10% of spot price.
@@ -179,14 +180,14 @@ These are yes/no machine-checkable gates that catch silent-error classes. None o
 **Question**: every external anchor cited as evidence in any pillar must be traceable to the actual source file with the data point quoted.
 
 **Mechanic**:
-1. List every external anchor cited in pillar evidence (sell-side estimate, consensus median, regulatory threshold, industry-report figure, peer benchmark).
+1. List every external anchor cited in pillar evidence. Accepted anchor types (any mode): **CapIQ consensus data** (median/mean, comps multiples, own-history), **management guidance**, **earnings-call analyst Q&A statements**, **filings line-items**, **regulatory thresholds**, **industry-report figures**, **peer benchmarks** — and **sell-side estimates** when `research_notes_available: true`.
 2. For each anchor, confirm:
-   - The source file exists at the claimed path (`sell-side/[firm].pdf`, `working/consensus_map.md`, etc.)
+   - The source exists at the claimed path (`working/consensus_map.md`, `working/street_view.md`, `transcripts/[call].htm`, `sell-side/[export].xls` or `[firm].pdf`, etc.)
    - The cited data point actually appears in the source — with the exact metric, year, and value
-   - The forecast horizon claimed is within the source's actual coverage (e.g., does the sell-side note actually cover FY+3? Does CapIQ Median actually have estimates for FY+3 / FY+5?)
+   - The forecast horizon claimed is within the source's actual coverage (e.g., does CapIQ Median actually have estimates for FY+3 / FY+5? Did mgmt actually guide that far?)
 3. Flag any anchor that fails. **Fix the citation or drop the claim — do not waive.**
 
-**Why this exists**: anchors get fabricated mid-workflow when working from memory. Example failure mode: citing "[Vendor] Median FY+3 GM at 35.0%" when [Vendor]'s coverage actually ends at FY+2. The error is invisible to the user unless they re-pull the source.
+**Why this exists**: anchors get fabricated mid-workflow when working from memory. Example failure mode: citing "[Vendor] Median FY+3 GM at 35.0%" when [Vendor]'s coverage actually ends at FY+2. The error is invisible to the user unless they re-pull the source. Under `research_notes_available: false`, be doubly careful not to attribute a specific number to "the Street" that actually came from your own driver build — label modeling as modeling (per the SKILL.md modeling-vs-sourced rule).
 
 ### Gate B — Decomposition bridge math check
 

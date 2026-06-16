@@ -22,7 +22,7 @@ author: "[Author name]"
 | [Key margin] | | | | | |
 | Operating income | | | | | |
 | EBIT margin | | | | | |
-| FCFF | | | | | |
+| FCFF *(DCF path only — omit on the default forward-multiple path)* | | | | | |
 | [Key driver — subs / units / ASP] | | | | | |
 
 *FY[N]A audited per [filing] filed [date]. Forwards from internal model; full schedule in Appendix A.*

@@ -1,11 +1,15 @@
 # Phase 2 — Company Brief
 
-**Goal**: Produce a readable ~1,500–2,000 word synthesis that gives the user genuine understanding of the business. This is NOT a copy of the 10-K business description — it's a thoughtful condensation with citations.
+**Goal**: Produce a readable, complete synthesis that gives the user genuine understanding of the business. This is NOT a copy of the 10-K business description — it's a thoughtful condensation with citations.
+
+> **Length principle (applies to every working document in this skill):** word counts anywhere in this spec are **indicative only — never a cap**. Completeness comes first: include everything material, be concise, but never drop required content to hit a length. A longer brief that carries all the required elements beats a shorter one that omits them.
 
 **Output**:
 - `extractions/20F_extraction.md` (or `10K_extraction.md` for US issuers) — produced in Step 0 below
 - `extractions/headline_anchors.md` — produced in Step 0 below
-- `working/company_brief.md` — the main synthesis output
+- `working/company_brief.md` — **the single Phase 2 working deliverable.** Everything the brief needs — including the deep-dives on material live events (regulatory / litigation / short reports), international or segment economics, and sum-of-parts — goes IN here **as a section**, NOT a separate `working/<topic>.md` note. Phase 2 produces exactly one synthesis file. (The two extraction files above are reference inputs, not separate Phase-2 deliverables.)
+
+Citation discipline applies to every numeric claim in this phase's output: `[source, p.N]` / `[source]` / `[est, not disclosed]`, validated by `scripts/validate_citations.py` before saving — see SKILL.md "Important behaviors".
 
 ---
 
@@ -30,7 +34,7 @@ The reading methodology is taken from the **`equity-research:initiating-coverage
 | **Multi-year reading** (read FY[N] AND FY[N-1] annual filings minimum; FY[N-2] if pre-profitability or major narrative shift) | ✅ Borrow | The current-year 20-F has 3-year P&L but only 1-year MD&A narrative |
 | **Structured risk taxonomy** — 4 categories (Company / Industry / Financial / Macro), 8-12 total risks, 50-100 word descriptions | ✅ Borrow | More disciplined than ad-hoc "top N" |
 | **Dedicated management research step** — 300-400 word bios for CEO + CFO + 2 other key execs from DEF 14A / equivalent + LinkedIn + press interviews | ✅ Borrow | Mgmt depth otherwise gets skimmed |
-| **Output structure: 9 sections × 6,000-8,000 words** | ❌ Do NOT borrow | That's the heavy initiation-report use case; this skill is thesis-first, 5-8 page memo |
+| **Output structure: 9 sections × 6,000-8,000 words** | ❌ Do NOT borrow | That's the heavy initiation-report use case; this skill is thesis-first, 10-18 page memo |
 | **Output format: DOCX report** | ❌ Do NOT borrow | This skill outputs markdown |
 | **Linear deliverable pipeline (Task 1 → Task 2 → Task 3)** | ❌ Do NOT borrow | This skill is thesis-first: brief feeds Phase 4 + Phase 6, not a linear report |
 
@@ -152,15 +156,18 @@ If either file is missing or under 1,000 words, stop and complete Step 0 first.
 
 ## Structure of the Company Brief
 
-Four sections, target word counts in parens. Cite every quantitative claim with file path and section.
+Four sections. Word counts in parens are **indicative only, never caps** (see the length principle at the top). Cite every quantitative claim with file path and section.
 
 ### Section 1 — What & how (~400 words)
 
 - **Plain English description**: What does the company actually do? Avoid corporate jargon. If your friend asked "what does this company do?", how would you answer in 2 sentences?
 - **How they make money**: Revenue model (subscription, transaction, licensing, services, mix). Key revenue lines and what drives each.
-- **Revenue mix**: by segment, geography, customer type. Use a table.
-- **Scale**: revenue (current FY + 3yr CAGR), employees, customers, key operational metrics
-- **Cite**: 10-K Item 1 (Business), latest 10-Q, latest earnings deck
+- **Revenue mix (MANDATORY — TABLES)**: **two tables — by segment/revenue-line AND by geography.** Both are required; if a geographic split is disclosed anywhere (often a segment-note "Geographic Information" table), it MUST appear. If genuinely not disclosed, say so explicitly.
+- **Multi-year financial path (MANDATORY — TABLE, ≥4 fiscal years)**: Revenue, Operating income, operating margin, Net income (GAAP **and** adjusted/non-GAAP), EPS — as a path. The latest filing usually shows only 3 audited years; **pull the prior-year 10-K/20-F to get the 4th year.** Where a one-off (e.g. an investment gain) distorts a line, show the clean operating line separately and flag the distortion.
+- **Forward-consensus snapshot (MANDATORY — TABLE, FY+1…FY+3)**: revenue, EBIT/operating income, implied margin, and YoY growth from CapIQ consensus medians. A *snapshot* only — the full driver-level decomposition is Phase 5. (Anchor FY0 on the actual.)
+- **Capital structure & capital allocation (MANDATORY)**: net cash/debt position, material debt instruments (converts/exchangeables), share count, and capital-return (buyback authorization + dividend).
+- **Scale + key operating KPIs + unit economics (MANDATORY)**: revenue (current FY + multi-yr CAGR), employees, customers, the **operational KPIs central to the business** (MAU, subs, GMV, take-rate, RPO, comp sales, etc.), and the **unit-economics / take-rate** — **derive it and label `[est]` if not separately disclosed** (don't just say "not disclosed" and move on).
+- **Cite**: 10-K Item 1 (Business) + segment/geographic note, latest 10-Q, latest earnings deck, prior-year 10-K/20-F (for the 4th P&L year)
 
 ### Section 1b — Latest quarter actuals vs consensus (mandatory)
 
@@ -255,7 +262,7 @@ This pattern survives CapIQ format changes. **Off-by-one offset errors flip beat
 | [Unique KPI 2] | [X] | [X] | [+/- absolute] |
 | Gross Margin | [X%] | [X%] | [+/- bps] |
 
-Source: CapIQ Consensus xlsx (`sell-side/[file].xlsx`), Median column for FQ[N] [Y].
+Source: CapIQ Consensus xlsx (`sell-side/[file].xlsx`), Median column for FQ[N] [Y]. (Pull BOTH the Actual and the Median from the CapIQ xlsx — never the actual from the shareholder letter in this table; cross-source mixing corrupts the beat/miss.)
 
 ## Q[N+1] FY[Y] — guide vs current consensus
 
@@ -301,15 +308,49 @@ Plus:
 - **Founding & history (~150w)**: founding year, founders, original business, key strategic pivots
 - **Major milestones**: M&A (>$100M deals), spinoffs, dividend initiations, share buybacks, leadership transitions
 - **Recent 12 months (~250w)**: what's happened? New products, layoffs, restructuring, board changes, regulatory actions, major contracts won/lost. Cite the 8-Ks and recent press.
-- **Cite**: 10-K Item 1 history paragraph, 8-K filings, press releases
+- **Stock action (MANDATORY)**: current level, 52-week range, % off the high, market cap — from `working/market_data.md`. State plainly whether the stock is in a drawdown/run-up and the rough cause.
+- **Material live events — RESEARCH TO DEPTH (MANDATORY)**: for each item on the Phase-1 "Material events & overhangs" list (regulatory/antitrust investigations, litigation/class actions, short-seller reports, accounting flags, major M&A, management turmoil, activist stakes, guidance cuts, geopolitical/delisting risk, recalls), do not just cite the filing's stale risk factor — **actually research it**: what happened, **current status (resolved / ongoing / pending)**, what's at stake, range of outcomes (use precedent), and the thesis read. When an item is material, write it up **as a dedicated section of this company brief** (e.g. a "Regulatory overhang" or "Litigation" section, with the full timeline / scope / outcome-range / precedent / thesis-read tables — be as deep as the issue warrants). **Phase 2 is a single file (`company_brief.md`); the deep-dive lives in the brief, NOT a separate `working/<topic>.md` note.** These sections feed Phase 6 (asymmetry), Phase 7 (direction), and Phase 10 (killing conditions). `TCOM/working/company_brief.md` §5 (the SAMR deep-dive) is a worked template.
+- **One-line competitive frame (MANDATORY)**: name the main competitors (domestic + international). Full landscape is Phase 3 — here, one or two sentences so the reader knows who they're up against.
+- **Cite**: 10-K Item 1 history paragraph, 8-K filings, recent press, `working/market_data.md`
+
+## Surface the thesis crux (breadth — the quantified deep-dive is Phase 4)
+
+Phase 2 is **breadth**: understand the business. Part of understanding is knowing the **1–3 "key debates"** the Phase-1 crux scan surfaced (`context.md` "Key debates / crux", Step 5c) — the questions a sharp PM asks first (*is the growth engine profitable? what's the real take-rate? is the buried sub-business making money?*). The brief **must name and substantively describe each** — what it is, why it's the tension, the stage qualitatively, and management's stated view from the call — **not bury it in a throwaway line.** A brief that ticks every standard table but one-lines the crux has failed at *understanding the business*. **Breadth ≠ omission.**
+
+But the **rigorous quantified reconstruction** — segment-margin triangulation, take-rate decomposition, the "how much does it lose" number, sensitivity — is **Phase 4 (driver decomposition)**, the phase that decomposes the swing drivers (don't duplicate it here). Division of labor: **Phase 2 surfaces & describes the crux → Phase 4 quantifies it → Phase 6 adjudicates the bull/bear.** (Even at the breadth stage, a load-bearing undisclosed metric is not waved off as "not disclosed" — see the "Honest about gaps" rule below; a *first-pass* read of stage/direction belongs here, the full reconstruction in Phase 4.)
+
+Worked template: `TCOM/working/company_brief.md` §2.1 carries the international crux (its full quantified reconstruction is really Phase-4 depth — it lives in the brief because the user chose to consolidate it there).
 
 ## Style requirements
 
 - **Plain English first**, technical second. The user is building intuition.
 - **Quantify**: every section should have at least 3 numbers with sources.
-- **Honest about gaps**: if something isn't disclosed (e.g., customer concentration), say so. Don't make up estimates.
+- **Honest about gaps — but reconstruct the load-bearing ones**: if something isn't disclosed, say so. **However, for a *thesis-critical* metric (segment margin, take-rate, unit economics), "not disclosed" is the start of the analysis, not the end** — triangulate it from consolidated figures + segment/geography splits + peer benchmarks + management's call commentary, clearly flagged `[est, derived]`. The rule against fabrication forbids inventing numbers and passing them off as facts; it does **not** forbid disciplined, clearly-flagged estimation. Leaving a load-bearing number as "not disclosed" when it can be reasonably reconstructed is itself an analytical failure.
 - **Cite at sentence level when possible**: e.g., *"AI segment grew 47% YoY in FY25 (10-K p.34) but margins compressed 200bps (10-K p.36)."*
 - **Avoid sell-side puffery**: no "premier provider," "best-in-class," "world-class team" unless quoting management. Use neutral, descriptive language.
+
+## Company Brief — completion checklist (HARD GATE before the Q&A interlude)
+
+Before presenting the brief and opening the Q&A, the orchestrator MUST verify every item below is present in `working/company_brief.md`. Treat a missing item as a blocker, not a nice-to-have — this checklist exists because these elements were repeatedly skipped when they were only soft prose. If an item is genuinely N/A for the business (e.g. single-segment → no segment GM), state that explicitly in the brief rather than silently omitting it.
+
+- [ ] Plain-English description + how-they-make-money
+- [ ] **Revenue mix by segment/revenue-line — table**
+- [ ] **Revenue mix by geography — table** (or explicit "not disclosed")
+- [ ] **Multi-year financial path (≥4 fiscal years)** — Revenue / Operating income / op-margin / NI (GAAP + adjusted) / EPS, with one-off distortions flagged
+- [ ] Latest-quarter actual vs pre-print consensus — beat/miss table (§1b)
+- [ ] Next-quarter guide vs consensus (or "company gives no quantitative guidance") (§1b)
+- [ ] **Forward-consensus snapshot (FY+1…FY+3)** — revenue / EBIT / margin + growth
+- [ ] **Capital structure & capital allocation** — net cash/debt, instruments, share count, buyback + dividend
+- [ ] **Key operating KPIs + unit economics / take-rate** (derived `[est]` if not disclosed)
+- [ ] Products & customers; customer concentration; GTM; pricing
+- [ ] Management + governance + insider/major-holder ownership
+- [ ] History + recent 12 months
+- [ ] **Stock action** — level, 52-wk range, % off high, market cap
+- [ ] **Material live-events researched to depth** — each Phase-1 overhang has a status + outcome read, written up **as a dedicated section of this brief** (not a separate note) where material
+- [ ] **Each Phase-1 "key debate" / crux is surfaced** — every item in `context.md` "Key debates / crux" is named and substantively described in the brief (what it is, stage, management's view), not omitted or one-lined. (The *quantified* reconstruction is Phase 4 — but the brief must not drop the crux.)
+- [ ] **Single-file check** — Phase 2 produced exactly ONE deliverable, `working/company_brief.md`; no separate topic notes were spun off (international economics, regulatory, litigation, etc. are all sections of the brief)
+- [ ] One-line competitive frame
+- [ ] `scripts/validate_citations.py working/company_brief.md` → prose clean
 
 ## Q&A interlude (HEAVY)
 

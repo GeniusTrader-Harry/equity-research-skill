@@ -1,8 +1,12 @@
 # Phase 3 — Industry Brief
 
-**Goal**: Produce a ~1,500–2,000 word industry / competitive landscape synthesis that situates the company in its market. This is where moats, competitive position, and structural tailwinds/headwinds are described — all of which feed Phases 4–7.
+**Goal**: Produce an industry / competitive landscape synthesis that situates the company in its market. This is where moats, competitive position, and structural tailwinds/headwinds are described — all of which feed Phases 4–7.
+
+> **Length principle:** word counts in this spec are **indicative only — never a cap**. Completeness first; never drop material content to hit a length.
 
 **Output**: `working/industry_brief.md`
+
+Citation discipline applies to every numeric claim in this phase's output: `[source, p.N]` / `[source]` / `[est, not disclosed]`, validated by `scripts/validate_citations.py` before saving — see SKILL.md "Important behaviors".
 
 ## Structure
 
@@ -70,8 +74,8 @@ For each moat, rate: Wide / Narrow / None — and **state the evidence** (don't 
 ## Sources for industry data
 
 In priority order:
-1. **Sell-side industry primers** in `sell-side/` (best — most current and most analytical)
-2. **The company's own 10-K** Item 1 — companies disclose competitors and industry framing
+1. **Sell-side industry primers** in `sell-side/` (best — most current and most analytical) — *only if `research_notes_available: true`*; under Mode A skip to 2–7 and use `working/street_view.md` for the Street layer
+2. **The company's own 10-K Item 1 / 20-F Item 4** — companies disclose competitors and industry framing
 3. **Competitor 10-Ks** — useful for cross-checking market share claims
 4. **Gartner / Forrester / IDC** via web search (often paywalled, but headline numbers are usually free)
 5. **Trade publications**: e.g., Semiconductor Engineering for semis, Modern Healthcare for health, etc.

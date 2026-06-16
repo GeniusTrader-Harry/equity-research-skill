@@ -1,15 +1,20 @@
 # Phase 13 — Write the Pitch (Investment Memo)
 
+**Contents**: Why 10-18 pages · Two-layer principle · Two pitch formats · Vocabulary at the memo boundary (Pillar→Thesis) · Standard memo structure (cover + Sections 1–6 + Appendices A/B, with section templates) · Build mechanics (build_memo.sh, page breaks) · Process (Steps 1–9: pre-draft consistency audit, assemble from working files, catalysts, draft, docx/pdf build, length + discipline checklist, present, iterate, **finalize + publish to the GitHub research archive**)
+
 **Goal**: Synthesize Phases 1-12 into an interview-grade investment memo. The memo is the deliverable — used for interview pitches, PM hand-offs, and self-reference. The cover page is the verbal-pitchable summary; the body sections carry the depth.
 
 **Output**:
 - `~/Claude Projects/Equity Research/[TICKER]/deliverables/[ticker]_pitch.md` — source markdown
 - `~/Claude Projects/Equity Research/[TICKER]/deliverables/[ticker]_pitch.docx` — Word output
 - `~/Claude Projects/Equity Research/[TICKER]/deliverables/[ticker]_pitch.pdf` — PDF output (sell-side styled)
+- `~/Python/equity-research-archive/tickers/[TICKER]/` — published copy on the GitHub Pages research archive (PDF + model + ticker page + landing card), pushed at finalize (Step 9a)
+
+> **Length is a target, not a hard cap.** 10-18 pages is the guideline for a buy-side-style memo; never cut material content (a needed valuation appendix, a real risk, a killing condition) just to stay inside it. Completeness and defensibility come first — if the thesis genuinely needs more room, take it.
 
 ## Why 10-18 pages, not 5-8, not 50
 
-- **5-8 pages** is too tight to include a defensible DCF appendix. Without one, the memo loses interview defensibility — interviewers probe valuation mechanics, not just the headline PT.
+- **5-8 pages** is too tight to include a defensible valuation appendix (forward-multiple triangulation or DCF). Without one, the memo loses interview defensibility — interviewers probe valuation mechanics, not just the headline PT.
 - **30-50 pages** (sell-side initiation format) is for institutional publication. ~80% boilerplate.
 - **10-18 pages** matches buy-side associate / PM memo format with appendices. Body sections carry the thesis depth, appendices carry the model mechanics.
 
@@ -17,7 +22,7 @@
 
 | Layer | Content | Purpose |
 |---|---|---|
-| **Memo** (10-18 pages, body + 2 appendices, `deliverables/[ticker]_pitch.*`) | Synthesized argument with evidence + model output + killing conditions + DCF mechanics | Interview artifact; self-test of integration |
+| **Memo** (10-18 pages, body + 2 appendices, `deliverables/[ticker]_pitch.*`) | Synthesized argument with evidence + model output + killing conditions + valuation mechanics (multiple triangulation or DCF) | Interview artifact; self-test of integration |
 | **Working archive** (`working/`) | Phase 1 raw filings + briefs, Phase 2-3 understanding, Phase 6 asymmetries, Phase 8-10 pillar dev, Phase 11 model | Drill-down reference; not handed to anyone |
 
 The memo references the archive but does not reproduce it.
@@ -73,12 +78,14 @@ author: "[Your name]"
 | Revenue | | | | | |
 | Y/Y growth | | | | | |
 | [Key margin — GM or EBITDA] | | | | | |
+| EBITDA | | | | | |
 | Operating income | | | | | |
 | EBIT margin | | | | | |
-| FCFF | | | | | |
+| EPS | | | | | |
+| [FCFF — DCF path only] | | | | | |
 | [Key driver — subs, units, ASP] | | | | | |
 
-*FY[N]A audited per [filing] filed [date]. Forwards from internal model; full schedule in Appendix A.*
+*FY[N]A audited per [filing] filed [date]. Forwards from internal model; full schedule in Appendix A. On the default forward-multiple path the headline drivers are **forward EBITDA and EPS** (the metrics the PT is struck on); include the **FCFF** row only when the valuation method is DCF.*
 ```
 
 **Do NOT include on the cover:**
@@ -207,7 +214,7 @@ Six levers × ~150 words = ~900w mechanism block, which is appropriate for an of
 
 ### What NOT to include in each thesis
 
-- **"Magnitude vs Street" sub-blocks.** Edge-vs-sell-side materiality math (e.g., "+170bps above CJ at 34.1%") belongs in `working/pillars_audited.md` as the analytical record showing where the edge is sized. The memo should describe **mechanism + evidence + sizing in absolute terms** (e.g., "+€247M of gross profit per 100bps × $16-20/share"), not analyst-materiality comparisons against named anchors.
+- **"Magnitude vs Street" sub-blocks.** Edge-vs-sell-side materiality math (e.g., "+170bps above CJ at 34.1%") belongs in `working/pillars_audited.md` as the analytical record showing where the edge is sized. The memo should describe **mechanism + evidence + sizing in absolute terms** (e.g., "+€247M of gross profit per 100bps × $16-20/share"), not analyst-materiality comparisons against named anchors. When no per-bank data exists, do not fabricate one — the single legitimate "vs Street" reference is the **headline consensus** (aggregate revenue / OI / EPS), stated once in Section 5, never inside a thesis.
 - **Editorialising closes.** Lines like "this is the defensive thesis" or "this matches Wolfe-mid" are repetitive. The structure of evidence carries the offensive/defensive distinction without explicit labels.
 - **Model-output decompositions in parentheses.** Lines like "(model output: Premium segment GM 37.3% × 90.7% of revenue)" add noise. Keep headline numbers; suppress the decomposition arithmetic unless it's the central point.
 
@@ -238,7 +245,9 @@ Steel-manned counter-theses from Phase 9. **Section title: just "Risks"** (no "S
 
 ### Section 5 — Valuation (1-2 pages)
 
-Compressed Phase 11 model output. Don't reproduce the model — summarise it. **Body keeps: envelope → tornado → headline equity bridge. Methodology + WACC build move to Appendix A.**
+Compressed Phase 11 model output. Don't reproduce the model — summarise it. **Body keeps: envelope → tornado → headline equity bridge. Methodology + (the multiple triangulation table, or the WACC build if DCF) move to Appendix A.**
+
+The body should state the method in one line — e.g. *"Valued on 8.5× FY+2 EV/EBITDA, cross-checked at 18× FY+2 P/E"* — and let Appendix A carry the triangulation and bridge mechanics.
 
 ```markdown
 # 5. Valuation
@@ -262,17 +271,19 @@ Compressed Phase 11 model output. Don't reproduce the model — summarise it. **
 
 ## Headline equity bridge
 
-[2-3 line summary: EV + net cash = equity / shares = per-share USD. Pointer to Appendix A for full mechanics.]
+[2-3 line summary, by method:
+- **Forward multiple (default)**: FY+2 EBITDA × applied multiple = EV; EV + net cash − minorities + non-core stakes = equity / shares = per-share. Note the P/E cross-check and reconcile.
+- **DCF**: EV (PV of FCFF + terminal) + net cash = equity / shares = per-share USD.
+Pointer to Appendix A for full mechanics.]
 
-Full DCF mechanics, WACC build, and sensitivity in Appendix A.
+Full valuation mechanics — multiple triangulation + equity bridge (or, if DCF, the FCFF schedule + WACC build) — and the sensitivity grid in Appendix A.
 ```
 
 **Do NOT include in Section 5:**
 - Standalone "Methodology" subsection in body (1-2 sentences inline is enough; full methodology in App A)
-- WACC build in body (moves to App A)
+- WACC build in body (moves to App A — DCF path only)
 - Risk/reward skew prose explanation (let the envelope table speak)
-- Comps cross-check (demoted to optional; belongs in working files unless comparables analysis is part of the thesis)
-- Sell-side reconciliation (demoted to optional; same logic)
+- On the DCF path: the comps cross-check and sell-side reconciliation are optional (belong in working files unless central to the thesis). On the default forward-multiple path the **triangulation table IS the valuation** — it belongs in Appendix A, not demoted.
 
 ### Section 6 — Catalysts and Killing Conditions (1 page)
 
@@ -302,12 +313,67 @@ Full DCF mechanics, WACC build, and sensitivity in Appendix A.
 - **C2.1** ([title]): [verbatim]
 ```
 
-### Appendix A — Discounted Cash Flow (1-2 pages)
+### Appendix A — Valuation (1-2 pages)
 
-Full DCF mechanics — what got compressed out of Section 5. Includes WACC build (moved from body).
+Full valuation mechanics — what got compressed out of Section 5. **Use the layout that matches the Phase 11 method gate.** On the default path this is the forward-multiple layout; the DCF layout follows below for DCF-selected names.
+
+#### Forward-multiple layout (default)
 
 ```markdown
-# Appendix A — Discounted Cash Flow
+# Appendix A — Valuation
+
+## Methodology
+
+[1 paragraph: forward multiple on which metric (EV/EBITDA, P/E, or both reconciled)? Which forward year drives the headline (FY+2 default; FY+1 checkpoint)? Discount-back to a 12-month PT applied or not? Working currency and FX convention. These mirror what was committed in Phase 11.]
+
+## Forward-estimate build
+
+| ([currency] M) | FY[N]A | FY[N+1]E | **FY[N+2]E** | FY[N+3]E |
+|---|---|---|---|---|
+| Revenue | | | | |
+| EBITDA | | | **(drives EV/EBITDA)** | |
+| EPS | | | **(drives P/E)** | |
+
+[Brief notes tying the forward estimate to the load-bearing thesis drivers.]
+
+## Multiple selection — triangulation
+
+| Anchor | Range | Read |
+|---|---|---|
+| Peer set forward [EV/EBITDA or P/E] | [e.g. 7.5–10.5×] | [where peers trade] |
+| Own 5-year trading range | [e.g. 6–12×, median ~8×] | [premium / discount to own history] |
+| Sell-side PT-implied | [e.g. 7.7×–10.7×] | [what published PTs assume] |
+| **Applied (base)** | **[e.g. 8.5×]** | [which pillar justifies the position in the range] |
+
+## Equity bridge
+
+| Component | Value |
+|---|---|
+| FY[N+2] [EBITDA / EPS] | |
+| × Applied multiple | |
+| **Enterprise Value** | |
+| + Net cash (− net debt) | |
+| − Minority interest | |
+| + Non-core investments [e.g. listed stake] | |
+| **Equity Value** | |
+| ÷ Diluted shares | |
+| Per share (local currency) | |
+| × FX | |
+| **Per share (USD)** | |
+| P/E cross-check per share | |
+| Reconciliation note | [EV/EBITDA vs P/E gap + driver] |
+| Spot price | |
+| **Implied return** | |
+
+## Sensitivity (forward estimate × applied multiple)
+
+[Table showing PT range across the forward-estimate × applied-multiple envelope.]
+```
+
+#### If DCF method selected
+
+```markdown
+# Appendix A — Valuation (Discounted Cash Flow)
 
 ## Methodology
 
@@ -524,7 +590,7 @@ Before drafting, run the consistency audit per [SKILL.md "Pre-Phase-13 audit che
 
 1. Every pillar magnitude reconciles to the model output within tolerance (or the difference is documented)
 2. Every killing condition links to a pillar claim and to a model assumption
-3. All valuation numbers (PT, bull/base/bear, skew, WACC) trace back to `working/valuation_outputs.yaml` — no manual transcription drift
+3. All valuation numbers (PT, bull/base/bear, skew, applied multiple — or WACC on the DCF path) trace back to `working/valuation_outputs.yaml` — no manual transcription drift
 4. Every external anchor cited in pillars is traceable to the source file with the data point quoted
 
 If any check fails, fix the working files BEFORE drafting the memo. The memo is a synthesis layer — if the inputs disagree, no amount of memo iteration will fix it.
@@ -566,7 +632,7 @@ After draft, verify:
 - Page count 10-18?
 - Each thesis 600-900w (load-bearing thesis 1,000-1,500w)?
 - Killing conditions verbatim from Phase 10 (with Pillar → Thesis rename)?
-- Every quantitative claim → source file + page/section?
+- Every quantitative claim → source file + page/section? (run `scripts/validate_citations.py deliverables/[ticker]_pitch.md` and review the report: every flagged prose line is either cited or confirmed own-model output / KC threshold — zero unexplained flags)
 - Cover page alone contains: rating, PT, current, upside, 5-yr financials?
 - No "Conviction" / "Time Horizon" / 52-week / probability-weighted lines on cover?
 - No "Pillar" anywhere in body (all renamed to "Thesis")?
@@ -574,7 +640,7 @@ After draft, verify:
 - No editorialising thesis closes ("this is defensive...")?
 - "Mechanism" used as the section label inside each thesis (not "Why the call is correct")?
 - Valuation Section: no body methodology paragraph, no body WACC build, bull mechanics inside envelope-table Trigger column?
-- Appendix A present with full DCF + WACC build + sensitivity?
+- Appendix A present with the method-matching mechanics — forward-estimate build + triangulation table + equity bridge + sensitivity (default), or FCFF schedule + WACC build + sensitivity (DCF)?
 - Appendix B present with thesis-relevant model assumptions?
 
 ### Step 7 — Present to user
@@ -610,9 +676,24 @@ These are iteration discovery, not failures. Capture stylistic preferences in `~
 
 After each iteration, rerun `bash working/build_memo.sh [TICKER]` to regenerate outputs.
 
-### Step 9 — Finalize
+### Step 9 — Finalize & publish to the archive
 
-When user says "finalize":
+When the user says "finalize", do two things: **(9a) publish the deliverable to the research archive, then (9b) print the completion summary.**
+
+#### 9a — Publish to the research archive (GitHub Pages site)
+
+The finished pitch is published to the standing research-archive site — a GitHub Pages repo at `~/Python/equity-research-archive/` that serves one page per ticker. This is the **initiation-time** companion to the in-place archive bump that `equity-research-update` performs on every later refinement (see that skill's archive-site convention); without it, a brand-new pitch never lands on the site until its first update. **Mirror the existing ticker pages exactly — open one (`tickers/[existing]/index.html`) as the template; do not invent layout.**
+
+1. **Create `tickers/[TICKER]/`** with three files:
+   - `[TICKER]_pitch.pdf` — copied from `deliverables/[ticker]_pitch.pdf`; **must be byte-identical** (`md5`-check it).
+   - `[TICKER]_model.xlsx` — copied from `deliverables/[ticker]_model.xlsx`.
+   - `index.html` — clone an existing ticker's page and swap in this name's ticker / company / exchange, the rating pill, the PT / current / upside / market-cap meta, a 3–5-sentence thesis blurb, the two download buttons, and the PDF `<iframe src="[TICKER]_pitch.pdf?v=[YYYY-MM-DD]">` cache-bust. Keep the no-cache headers and the "Personal research. Not investment advice." disclaimer.
+2. **Add a coverage card to the root `index.html`** (newest-first) — clone the existing card block and swap ticker / company / rating pill / one-sentence thesis / `[date] · PT $[X] (±Y%)` / the `tickers/[TICKER]/` href.
+3. **Commit only those paths** — `git add` the explicit files, **never `git add -A`** (the archive may share a parent with other repos), message `[TICKER]: initiation — [RATING], PT $[X] (±Y%)` — then **push to the archive's GitHub remote (`main`)**. If the authenticated push hangs on a keychain prompt (common from non-`gh`-managed dirs), embed the token for the push then restore the clean URL: `git remote set-url origin "https://x-access-token:$(gh auth token)@github.com/<owner>/<repo>.git"` → `git push origin main` → restore the clean URL.
+
+**Discipline:** the archive PDF must equal the project PDF byte-for-byte (the update skill's anti-patterns enforce this on every refresh — hold the same bar at initiation). The archive is **public** and the push is outward-facing, so confirm before pushing (the user asked, or you ask) and verify only the intended files are staged.
+
+#### 9b — Completion summary
 
 ```markdown
 ✅ [TICKER] research complete.
@@ -626,6 +707,7 @@ Next catalyst: [event] on [date]
 Deliverables:
   - Pitch memo (md + docx + pdf): deliverables/[ticker]_pitch.{md,docx,pdf}
   - Model: deliverables/[ticker]_model.xlsx
+Published to archive: tickers/[TICKER]/ — live on the GitHub Pages site
 
 Research archive (working files retained):
   - Phase 1 sources: filings/, transcripts/, ir-materials/, sell-side/
@@ -665,8 +747,8 @@ Workflow ended.
 - **Editorialising thesis closes**: "this is the defensive thesis" / "this matches Wolfe-mid." Drop — structure carries the role.
 - **Bull case mechanics outside envelope table**: orphan block. Fold into Trigger column.
 - **Methodology paragraph in Section 5 body**: redundant. 1-2 sentences inline + full method in Appendix A.
-- **WACC build in body**: moves to Appendix A.
-- **Missing DCF appendix**: undermines interview defensibility.
+- **WACC build in body**: moves to Appendix A (DCF path only).
+- **Missing valuation appendix**: undermines interview defensibility — Appendix A must carry the multiple triangulation + equity bridge (default) or the full DCF + WACC build (DCF path).
 - **No cover page**: just opening at `# 1` is sell-side malpractice. Use YAML title block + rec table + 5-yr financials.
 - **`# TICKER` h1 duplicating YAML title**: drop the h1; let YAML render the cover.
 - **TOC sandwich**: pandoc default puts TOC between title and body. For memos ≤10 pages, omit TOC.

@@ -2,7 +2,9 @@
 
 **Goal**: Draft the **strongest possible counter-arguments** to the chosen direction. Don't strawman the other side. The counter-pillars become the risk section of the pitch — they don't become a parallel thesis.
 
-**Output**: `working/risks.md` with 2–3 counter-pillars. Tight: ~1 page total, ~150-200 words each.
+**Output**: `working/risks.md` with 2–3 counter-pillars. Aim tight (~150-200 words each) — but the word counts are **indicative only, never a cap**: completeness first, never drop a material counter-argument to hit a length.
+
+Citation discipline applies to every numeric claim in this phase's output: `[source, p.N]` / `[source]` / `[est, not disclosed]`, validated by `scripts/validate_citations.py` before saving — see SKILL.md "Important behaviors".
 
 ## Why this matters
 

@@ -4,6 +4,10 @@
 
 **Output**: `working/direction_brief.md` + chosen direction recorded in `working/direction.md`
 
+> **Length principle:** word counts in this spec are **indicative only — never a cap**. Completeness first; never drop material content to hit a length.
+
+Citation discipline applies to every numeric claim in this phase's output: `[source, p.N]` / `[source]` / `[est, not disclosed]`, validated by `scripts/validate_citations.py` before saving — see SKILL.md "Important behaviors".
+
 ## Why this matters
 
 Without an explicit direction, the workflow can't proceed — Phase 8 develops pillars *for* a direction, not in the abstract. But picking a direction is judgment, not data. Phase 7's job is to make the judgment as informed as possible.
@@ -13,7 +17,7 @@ Without an explicit direction, the workflow can't proceed — Phase 8 develops p
 ### Section 1 — Setup (~150 words)
 
 The current market state of the name:
-- **Price action**: current price, YTD performance, 1Y / 3Y returns, 52-week range position
+- **Price action**: current price, YTD performance, 1Y / 3Y returns, 52-week range position. **Re-pull the live price now — do not reuse the Phase 1 snapshot, which may be days stale.** The direction commit happens here, so the price it's judged against must be current; a name that has moved materially since Phase 1 is a different setup.
 - **Recent revisions**: # upward / # downward in last 30 / 90 days
 - **Street rating distribution**: how many BUY / HOLD / SELL among covering analysts, with target range
 - **Recent news / catalysts**: what's moved the stock in the last 30 days?

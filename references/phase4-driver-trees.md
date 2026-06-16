@@ -4,6 +4,8 @@
 
 **Output**: a markdown file `working/driver_tree.md` with the customized tree.
 
+Citation discipline applies to every numeric claim in this phase's output: `[source, p.N]` / `[source]` / `[est, not disclosed]`, validated by `scripts/validate_citations.py` before saving — see SKILL.md "Important behaviors".
+
 ## The principle
 
 Every thesis pillar must route through a driver. So the tree must:
@@ -24,6 +26,8 @@ Open both:
 **Every absolute number in the driver tree (revenue, OI, GM, subs, MAU, ARPU, R&D, S&M, G&A, segment metrics) must be copied verbatim from these extractions, never drafted from memory.**
 
 This step exists because: an earlier iteration of this skill on SPOT used FY24 numbers as if they were FY25 (one-year shift error), silently corrupting every growth-rate computation downstream. The mechanism that prevents this is *always re-pulling anchors from the extraction file at the start of Phase 4*, regardless of what you "remember" the numbers to be.
+
+**Also verify the extraction itself is still current**: confirm `headline_anchors.md` reflects the latest reported period — if a new earnings release landed since Phase 2 ran, refresh the extractions before drafting (SKILL.md re-pull rule).
 
 Specific checks before drafting:
 - Latest fiscal year revenue, OI, NI, EPS, FCF — from anchors file, with citation tag
@@ -228,7 +232,8 @@ For most businesses, the templates above need modification. Common patterns:
 2. **Customize**: add nodes for company-specific economics, remove nodes that don't apply
 3. **Tag each node with units**: % YoY for growth metrics, $ for absolute, bps for spreads, # for counts
 4. **Identify swing drivers**: which 3–5 nodes, if they move, materially change the price target? Mark these — they're the focus for Phases 5–6.
-5. **Document the tree** in `working/driver_tree.md`
+5. **Deep-dive each swing driver's economics (MANDATORY — the depth gate).** *Identifying* a swing driver is not *decomposing* it. For each swing driver — and for each Phase-1 "key debate" that is a structural driver (`context.md` "Key debates / crux", Step 5c) — research its **current economics to depth**: is it profitable / what's the contribution / how much does it make or lose, and at what **stage** (investment / inflection / harvest)? **Reconstruct what the company doesn't disclose** — segment margin, take-rate, a buried sub-business's P&L (Temu inside PDD, AWS-historically inside Amazon, international-margin inside TCOM) — by triangulating consolidated figures + segment/geography splits + peer benchmarks, AND pulling **management's own answers from the earnings-call Q&A** (analysts ask these exact questions on the record). Flag every reconstructed number `[est, derived]`. This is where *"is the growth engine actually making money?"* gets a **quantified** answer, not a qualitative gesture. Worked template: the TCOM international-economics reconstruction (breakeven-to-loss triangulation + the management margin quotes).
+6. **Document the tree** in `working/driver_tree.md`
 
 ## Q&A interlude (LIGHT–MEDIUM)
 

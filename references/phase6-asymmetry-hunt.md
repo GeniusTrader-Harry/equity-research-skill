@@ -44,14 +44,14 @@ A pillar with no asymmetry is just consensus repackaged — no edge. Every defen
 
 **What it is**: The Street's mental model of how the business works is becoming wrong, but everyone's still using the old framework. The most powerful (and rarest) asymmetry type.
 
-**How to spot**: Compare how sell-side notes describe the business to how mgmt is describing it on recent calls. Is there a divergence? Is mgmt re-defining its own narrative? Common cases:
+**How to spot**: Compare how the **Street** describes the business to how mgmt is describing it on recent calls. The Street's framing comes from sell-side notes when `research_notes_available: true`; otherwise from the **earnings-call analyst Q&A + financial press** (`working/street_view.md`; full Mode-A fallback ladder in Phase 1 Step 9) — the questions analysts ask reveal the mental model they're using, which is exactly what you're testing for staleness. Is there a divergence? Is mgmt re-defining its own narrative? Common cases:
 - Street values on ARR multiples; company has shifted to consumption pricing → multiple is wrong
 - Street uses backward-looking comp set; the company has moved into a new TAM
 - Street treats company as cyclical; secular shift is making it non-cyclical (or vice versa)
 - Street prices on EBITDA; capex profile has changed making FCF the right metric
 
 **Evidence to gather**:
-- Sell-side framing (paraphrase the modal Street view)
+- The modal Street framing (paraphrase — from sell-side notes if available, else from the analyst Q&A on recent calls / press)
 - Mgmt's current framing (verbatim quotes)
 - The framework gap and why it matters
 - What multiple or model would the new framework imply?
@@ -91,7 +91,7 @@ A name becomes "the AI play" or "the EV play" and gets priced on narrative rathe
 Don't free-associate. Go through each type, look for candidates:
 - Type 1: scan Phase 5 dispersion flags
 - Type 2: scan most recent transcripts (last 90 days) for new mgmt commentary
-- Type 3: compare sell-side framing to mgmt framing
+- Type 3: compare the modal Street framing (sell-side notes if available, else analyst Q&A + press) to mgmt framing
 - Type 4: compare Street estimates to fundamentals + historical patterns
 
 ### Step 2 — For each candidate, write an entry
@@ -120,13 +120,23 @@ Don't free-associate. Go through each type, look for candidates:
 
 Quality over quantity. 5 strong candidates with verbatim evidence beats 12 vague ones. If you can only find 3, that's fine — say so. If you find 12, prioritize the ones with the largest driver impact.
 
+### Step 3b — Two structural checks before finalizing (MANDATORY)
+
+Run both checks and write the result into the closing section of `working/asymmetries.md`:
+
+1. **Setup-bias check** (when the Phase 1 setup flag shows a significant drawdown or run-up): report the bull-vs-bear candidate count and justify the imbalance with evidence in one paragraph. A big drawdown invites rebound narratives; a big run-up invites momentum narratives — the skew must be driven by the evidence, not the price chart. (Real case: SPOT 2026-05 first cut was 5 bull / 0 bear on a stock 46% off highs; the user's pushback re-cut it to 1 bull / 2 bear, changing the thesis framing.)
+
+2. **Conviction-ceiling check**: count how many *independent* drivers (per the Phase 4 driver tree) the surviving asymmetries route through. If they all pivot on one driver, flag explicitly: "one-driver thesis — conviction cap Medium; Phase 7 must acknowledge this before committing." (Real case: FLR 2026-06 — all three asymmetries reduced to the segment-margin ramp; the cap only surfaced organically in the file's closing paragraph.)
+
+These are flags for the user's Phase 7 judgment, not auto-decisions.
+
 ### Step 4 — Save to `working/asymmetries.md`
 
 ## Q&A interlude (MEDIUM)
 
 After producing:
 
-> "Phase 6 complete. [N] candidate asymmetries surfaced at `working/asymmetries.md`. Bullish lean: [N]. Bearish lean: [N]. Either: [N]. Continue to Phase 7 (direction commit) or ask about specific candidates."
+> "Phase 6 complete. [N] candidate asymmetries surfaced at `working/asymmetries.md`. Bullish lean: [N]. Bearish lean: [N]. Either: [N]. [Setup-bias check: …] [Independent drivers: N — conviction ceiling flag if 1]. Continue to Phase 7 (direction commit) or ask about specific candidates."
 
 Common questions:
 - *"What's the evidence behind asymmetry [N]?"* — pull more verbatim quotes, more transcript context
